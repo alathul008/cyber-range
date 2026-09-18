@@ -1,0 +1,38 @@
+title: PowerShell Encoded Command Execution
+id: e33ad548-1ea7-4ea8-8205-e193590a40ab
+status: experimental
+description: >
+  Detects Windows PowerShell execution where the command line contains
+  -EncodedCommand or the abbreviated -enc parameter. This is an
+  investigation-worthy behavioral indicator and is not inherently malicious.
+
+author: Cyber Range Lab
+date: 2026-09-18
+
+logsource:
+  product: windows
+  category: process_creation
+
+detection:
+  selection_image:
+    Image|endswith: '\WindowsPowerShell\v1.0\powershell.exe'
+
+  selection_encoded:
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-enc '
+
+  condition: selection_image and selection_encoded
+
+falsepositives:
+  - Administrative scripts
+  - Automation
+  - Software deployment
+  - Security testing
+  - Legitimate PowerShell automation
+
+level: medium
+
+tags:
+  - attack.execution
+  - attack.t1059.001
