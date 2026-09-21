@@ -1,0 +1,23 @@
+title: CMD spawning PowerShell
+id: 5f8d2d4a-7a7f-4e3f-9d8f-2e0f4c5a1b6d
+status: test
+description: Detects PowerShell spawned directly by Windows Command Shell using Windows process creation telemetry.
+author: Cyber Range Lab
+date: 2026/09/20
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4688
+    NewProcessName|endswith: '\\powershell.exe'
+    CreatorProcessName|endswith: '\\cmd.exe'
+  condition: selection
+falsepositives:
+  - Legitimate administrative scripts launched from cmd.exe
+  - Software installation or maintenance workflows using cmd.exe to invoke PowerShell
+level: medium
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.t1059.003
