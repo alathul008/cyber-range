@@ -1,0 +1,25 @@
+title: Scheduled Task Created with CMD Execution
+id: 7a6e5b1c-4d92-4f37-8a61-2c9e0b7d3f54
+status: test
+description: Detects Windows scheduled task creation where the task definition executes cmd.exe.
+author: Cyber Range Lab
+date: 2026/09/21
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4698
+    TaskContent|contains: '<Command>cmd.exe</Command>'
+  condition: selection
+falsepositives:
+  - Legitimate administrative scheduled tasks
+  - Software installation and update workflows
+  - Enterprise management agents
+  - Scheduled maintenance scripts
+level: medium
+tags:
+  - attack.persistence
+  - attack.execution
+  - attack.t1053.005
+  - attack.t1059.003
