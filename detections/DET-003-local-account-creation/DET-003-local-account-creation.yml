@@ -1,0 +1,21 @@
+title: Windows Local User Account Creation
+id: 0f7c9e31-7c3f-4c62-a9a2-8c6f3d5b8e11
+status: test
+description: Detects Windows Security Event ID 4720, used in the lab to identify creation of a local Windows user account.
+author: Cyber Range Lab
+date: 2026/09/21
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4720
+  condition: selection
+falsepositives:
+  - Legitimate local account provisioning
+  - Administrative maintenance
+  - Software or service installation workflows that create local accounts
+level: medium
+tags:
+  - attack.persistence
+  - attack.t1136.001
