@@ -1,0 +1,26 @@
+title: CMD spawning encoded PowerShell
+id: 2b3f1d7e-0e72-4f6c-9a8c-4d1e6b7f2039
+status: test
+description: Detects PowerShell spawned directly by Windows Command Shell with an encoded command-line argument using Windows process creation telemetry.
+author: Cyber Range Lab
+date: 2026/09/21
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4688
+    NewProcessName|endswith: '\\powershell.exe'
+    CreatorProcessName|endswith: '\\cmd.exe'
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-enc'
+  condition: selection
+falsepositives:
+  - Legitimate administrative scripts launched from cmd.exe using encoded PowerShell commands
+  - Software installation or maintenance workflows using cmd.exe to invoke encoded PowerShell
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.001
+  - attack.t1059.003
