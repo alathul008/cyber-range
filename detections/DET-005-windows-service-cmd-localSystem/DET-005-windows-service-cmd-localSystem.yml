@@ -1,0 +1,28 @@
+
+title: Windows Service Created with CMD Execution under LocalSystem
+id: 3d7c1e6a-9b42-4f05-a8d1-6c2e5b7f9041
+status: test
+description: Detects Windows service installation where the service image path executes cmd.exe and the service account is LocalSystem.
+author: Cyber Range Lab
+date: 2026/09/21
+logsource:
+  product: windows
+  service: system
+detection:
+  selection:
+    EventID: 7045
+    ServiceFileName|contains: 'cmd.exe'
+    ServiceAccount: 'LocalSystem'
+  condition: selection
+falsepositives:
+  - Legitimate software installation
+  - Endpoint management agents
+  - Enterprise deployment tooling
+  - Administrative service creation
+level: medium
+tags:
+  - attack.persistence
+  - attack.privilege_escalation
+  - attack.execution
+  - attack.t1543.003
+  - attack.t1059.003
