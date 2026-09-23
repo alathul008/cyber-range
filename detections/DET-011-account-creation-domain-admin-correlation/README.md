@@ -40,13 +40,15 @@ and:
 - The elapsed time is no greater than **600 seconds (10 minutes)**.
 - Both events originate from DC-01.
 
-The 10-minute value is a prototype design parameter. It has been validated against the controlled DET-010 sequence but has not yet been tuned against a larger benign-event dataset.
+The 10-minute value is a prototype design parameter. It has now been validated against both the controlled DET-010 sequence and a fresh DET-011 replay, but has not yet been tuned against a larger benign-event dataset.
 
 ## Data Source
 
-The prototype queries the Wazuh Indexer alert index:
+The prototype queries the Wazuh Indexer alert index.
 
-`wazuh-alerts-4.x-2026.09.22`
+For the fresh replay, the target index was:
+
+`wazuh-alerts-4.x-2026.09.23`
 
 The live Indexer API was verified on WAZUH-01 at `10.10.40.10:9200`.
 
@@ -54,7 +56,7 @@ Wazuh Manager and Wazuh Indexer were both confirmed active before validation.
 
 ## Deduplication
 
-The Indexer query returned duplicate documents for the controlled 4720 and 4728 events.
+The Indexer query can return duplicate documents for controlled events.
 
 The prototype therefore normalizes events by:
 
@@ -62,18 +64,18 @@ The prototype therefore normalizes events by:
 - correlation SID
 - timestamp
 
-This prevented duplicate Indexer documents from producing four apparent correlations from the two underlying Windows events.
+This prevents duplicate Indexer documents from producing multiple apparent correlations from the same underlying Windows events.
 
-Observed validation:
+The retained DET-010 validation returned:
 
-- Indexer documents returned: **4**
+- Indexer documents: **4**
 - Unique 4720 events: **1**
 - Unique 4728 events: **1**
 - Correlation matches: **1**
 
 ## Validation — DET-010 Evidence
 
-The prototype was executed against the retained DET-010 telemetry.
+The prototype was first executed against retained DET-010 telemetry.
 
 Observed values:
 
@@ -88,6 +90,68 @@ Observed values:
 | Correlation result | **1 match** |
 
 The test account was subsequently removed from Domain Admins and deleted as documented in DET-010.
+
+## Fresh Replay — DET-011 Validation
+
+A new controlled replay was executed on **2026-09-23** using a new temporary account.
+
+### Attack chain
+
+1. Created `det011.test` on DC-01.
+2. Added `det011.test` to `Domain Admins`.
+3. Confirmed the corresponding Windows Security events.
+4. Confirmed Wazuh alert ingestion in the 2026-09-23 alert index.
+5. Executed the Indexer-side correlation prototype.
+6. Confirmed a single correlation match.
+7. Removed the account from Domain Admins and deleted the account.
+
+### Observed Windows telemetry
+
+| Event | Evidence |
+|---|---|
+| 4720 | Account created; target SID ended in `-1118` |
+| 4722 | Account enabled; target SID ended in `-1118` |
+| 4738 | Account-change telemetry observed for SID `...-1118` |
+| 4728 | `det011.test` added to `Domain Admins`; member SID ended in `-1118` |
+| 4728 Windows Record ID | `25453` |
+
+The Windows Security log independently confirmed Event 4728 before correlation testing.
+
+### Wazuh telemetry
+
+The fresh 4720 alert was observed in:
+
+`wazuh-alerts-4.x-2026.09.23`
+
+with Wazuh rule **100104**.
+
+The fresh 4728 alert was observed with Wazuh rule **60159**, level **12**, description **Domain Admins Group Changed**. The event contained:
+
+- `memberSid = S-1-5-21-2519611076-441997742-1464114610-1118`
+- `memberName = CN=DET011-TestUser,CN=Users,DC=corp,DC=home,DC=arpa`
+- `targetUserName = Domain Admins`
+- Windows event record ID `25453`
+
+### Correlation result
+
+The prototype was retargeted to the 2026-09-23 alert index and executed against the fresh telemetry.
+
+Observed result:
+
+| Field | Observed value |
+|---|---|
+| Account | `det011.test` |
+| Account SID | `S-1-5-21-2519611076-441997742-1464114610-1118` |
+| 4720 timestamp | `2026-09-23T04:55:37.878Z` |
+| 4728 timestamp | `2026-09-23T04:56:04.544Z` |
+| Time delta | **26.666 seconds** |
+| Privileged group | `Domain Admins` |
+| Unique 4720 events | **1** |
+| Unique 4728 events | **1** |
+| Correlation matches | **1** |
+| Result | **Account creation followed by Domain Admins membership detected** |
+
+The temporary account was subsequently removed from Domain Admins and deleted. Verification after cleanup confirmed that `det011.test` no longer existed.
 
 ## Detection Engineering Progression
 
@@ -111,11 +175,13 @@ A read-only Indexer/query correlation layer successfully joined:
 
 within a bounded time window.
 
+The fresh replay independently validated that correlation against new telemetry.
+
 ## ATT&CK Context
 
 The underlying exercise involves account creation and privileged-group membership modification.
 
-The native Wazuh mappings observed during DET-010 were:
+The native Wazuh mappings observed during validation were:
 
 - Event 4720 / rule 100104: Wazuh mapped the event to **T1136.001 / Local Account**.
 - Event 4728 / rule 60159: Wazuh mapped the event to **T1484 / Domain Policy Modification**.
@@ -124,15 +190,16 @@ The 4720 native description/mapping was observed to label the DC-01 domain-accou
 
 ## Current Status
 
-**Prototype validated.**
+**Fresh replay validated.**
+
+The correlation logic is validated against both retained DET-010 evidence and a new DET-011 replay.
 
 This detection currently exists as a query/prototype rather than a continuously running production-style correlation service.
 
 ## Next Engineering Steps
 
-1. Validate the prototype against a fresh replay rather than only retained DET-010 evidence.
-2. Test benign account/group activity to measure false-positive behavior.
-3. Formalize the deduplication strategy using Windows event identity where available.
-4. Decide where persistent correlation should execute.
-5. Add an alert/output mechanism only after replay validation.
-6. Document detection performance and limitations from actual measurements.
+1. Test benign account/group activity to measure false-positive behavior.
+2. Formalize the deduplication strategy using Windows event identity where available.
+3. Decide where persistent correlation should execute.
+4. Add an alert/output mechanism only after replay validation.
+5. Document detection performance and limitations from actual measurements.
