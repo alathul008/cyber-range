@@ -356,6 +356,6 @@ PROJECT-STATE.md is the permanent cross-chat handoff. DETECTION-ROADMAP.md is th
 
 ## Current Architecture Boundary
 
-This document is the high-level architecture reference. Detailed topology, network specification, asset inventory, security-boundary specification, telemetry detail, operational-profile detail, resource plan, target architecture, and ADR collection are separate documentation tasks.
+This document is the high-level architecture reference. Detailed topology and network specification are now established in architecture/topology.md and architecture/network.md. Asset inventory, security-boundary specification, telemetry detail, operational-profile detail, resource plan, target architecture, and ADR collection remain separate documentation tasks.
 
 No infrastructure change is implied by this document.
