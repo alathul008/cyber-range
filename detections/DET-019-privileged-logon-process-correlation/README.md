@@ -1,212 +1,220 @@
 # DET-019 — Privileged Logon → Process Creation Correlation
 
-**Status:** CURRENT / NOT STARTED
+**Status:** EXECUTED / TELEMETRY VALIDATED / DETECTION NOT YET IMPLEMENTED
 
 ## Objective
 
 Investigate whether a privileged interactive logon is followed by process creation within the same Windows logon session, using stable session identifiers where the available telemetry supports correlation.
 
-The scenario extends the validated DET-018 chain:
+The controlled test extended the validated DET-018 chain:
 
 ```
 4624 Successful Logon
         ↓
 4672 Special Privileges
         ↓
-Sysmon Event ID 1
+4688 Process Creation
         ↓
-Process Creation
+Sysmon Event ID 1
         ↓
 Wazuh
         ↓
-Logon ID / session correlation
-        ↓
-Investigation
+Logon ID / process correlation
 ```
-
-No DET-019 attack or test has been executed yet.
 
 ## Environment
 
-Established project environment:
-
 - DC-01 — Windows Server 2025 Active Directory domain controller
-- WIN-01 — Windows enterprise endpoint
 - WAZUH-01 — Ubuntu/Wazuh security server
-- Wazuh agents:
-  - WIN-01: agent 001
-  - DC-01: agent 002
-- Sysmon installed on DC-01 and WIN-01
-- DC-01 Sysmon/Operational telemetry is explicitly collected by Wazuh
+- DC-01 Wazuh agent: 002
+- Sysmon installed on DC-01
+- DC-01 Sysmon/Operational telemetry collected by Wazuh
 - AD domain: `corp.home.arpa`
 - Domain NetBIOS name: `CORP`
+- Controlled account: `CORP\\admin`
 
-DET-019 execution must remain within the established isolated lab architecture.
+## Test Execution
 
-## Prerequisites
+A fresh `CORP\\admin` interactive session was established on DC-01.
 
-Before execution:
+The first session was UAC-filtered:
 
-1. This README must exist as the persistent DET-019 artifact.
-2. A pre-attack snapshot must be created for the relevant VM(s).
-3. Existing telemetry collection must remain unchanged unless a documented validation requires otherwise.
-4. The test must produce observable Windows logon, privilege, process-creation, and Wazuh telemetry.
-5. The resulting evidence must be sufficient to determine whether the process can be correlated to the privileged logon session.
+- Logon Type: 2
+- Logon ID: `0x131E2A`
+- Elevated Token: No
+- Integrity: Medium
 
-## Expected Telemetry
+A subsequent UAC elevation produced the privileged session used for the main correlation:
 
-The expected conceptual telemetry chain is:
+- Logon ID: `0xAF52CC`
+- Elevated Token: Yes
+- Linked Logon ID: `0xAF52DD`
+- Workstation: DC-01
 
-- Windows Security Event ID 4624 — successful logon
-- Windows Security Event ID 4672 — special privileges assigned
-- Sysmon Event ID 1 — process creation
-- Wazuh ingestion of the relevant telemetry
-- Windows Logon ID/session identifiers where available
+The linked-session relationship was independently confirmed from Security 4624 events.
 
-These are expected telemetry sources, not observed DET-019 results.
+## Validated Telemetry
 
-## Detection Opportunity
+### 4624 → 4672
 
-Determine whether a privileged logon followed by process creation can be correlated using a stable session identifier, particularly the Windows Logon ID.
-
-The detection question is:
-
-> Can process execution be associated with the privileged session established by the preceding 4624/4672 events?
-
-The test must distinguish:
-
-- successful authentication,
-- privileged-session establishment,
-- process creation,
-- and actual session correlation.
-
-## Correlation Approach
-
-The investigation should use the identifiers actually present in the collected telemetry.
-
-DET-018 already validated:
+The elevated session produced:
 
 ```
-4624 → 4672
+4624
+  targetLogonId = 0xAF52CC
+  logonType = 2
+  elevatedToken = Yes
+
+4672
+  subjectLogonId = 0xAF52CC
 ```
 
-using the Windows Logon ID.
+This validates the privileged-session relationship using the Windows Logon ID.
 
-DET-019 extends that investigation pivot toward Sysmon Event ID 1 process creation.
+### 4688 Process Creation
 
-The exact correlation fields, query, and implementation must be determined from the telemetry observed during the controlled test.
+Wazuh preserved process-creation telemetry for the same privileged Logon ID:
 
-No unsupported correlation syntax is pre-defined.
+```
+4688
+  subjectLogonId = 0xAF52CC
+  subjectUserName = admin
+  subjectDomainName = CORP
+```
 
-## Detection
+Observed processes included:
 
-**Status: NOT YET VALIDATED**
+- `C:\\Windows\\System32\\conhost.exe`
+- `C:\\Windows\\System32\\whoami.exe`
 
-No DET-019 detection rule or persistent correlation logic is claimed at this stage.
+The `whoami.exe` events were associated with `subjectLogonId = 0xAF52CC`.
 
-Native Wazuh coverage should be evaluated first. Any custom detection/correlation logic must be based on actual observed telemetry.
+### Sysmon Event ID 1
+
+A separate Sysmon Event ID 1 for `whoami.exe` was observed with:
+
+```
+User: CORP\\admin
+LogonId: 0x2C54AA
+IntegrityLevel: Medium
+ParentImage: C:\\Windows\\System32\\cmd.exe
+```
+
+The corresponding Security 4688 event used:
+
+```
+subjectLogonId = 0x2C54AA
+newProcessId = 0x1170
+newProcessName = C:\\Windows\\System32\\whoami.exe
+```
+
+The Sysmon PID was `4464`, which equals Security 4688 PID `0x1170`.
+
+This independently validates Security 4688 ↔ Sysmon Event 1 process correlation.
+
+## Correlation Finding
+
+The controlled test demonstrated two distinct but related correlation paths:
+
+```
+4624
+  ↓ same LogonId
+4672
+  ↓ same privileged LogonId
+4688
+  ↓ process telemetry
+Wazuh
+```
+
+For the privileged session, `0xAF52CC` was preserved by Wazuh across 4672 and 4688.
+
+Separately, Sysmon Event 1 and Security 4688 correlated through the process identity and `LogonId = 0x2C54AA`.
+
+### UAC/session boundary
+
+The elevated 4624/4672 Logon ID `0xAF52CC` must not be assumed to equal every Sysmon process Logon ID. The observed Sysmon `whoami.exe` event used `0x2C54AA`, and no 4624 event with `0x2C54AA` was found in the searched Security events.
+
+Therefore, a simplistic rule requiring:
+
+```
+4624.LogonId == Sysmon.Event1.LogonId
+```
+
+would not be sufficient for this UAC scenario.
+
+## Wazuh Validation
+
+Wazuh Indexer queries against `wazuh-alerts-4.x-2026.09.28` confirmed:
+
+- 4624 native rule 60118: Windows Workstation Logon Success
+- 4672 native rule 67028: Special privileges assigned to new logon
+- 4688 native rule 67027: A process was created
+- Wazuh preserved `targetLogonId` / `subjectLogonId` fields required for correlation.
+
+The validated privileged correlation key was:
+
+```
+0xaf52cc
+```
+
+## Detection Status
+
+**Telemetry validation: PASS**
+
+**Correlation design: VALIDATED**
+
+**Persistent custom detection: NOT YET IMPLEMENTED**
+
+The next engineering step is to determine whether the validated `4624 → 4672 → 4688` relationship can be implemented reliably using native Wazuh capabilities or requires a custom correlation mechanism.
+
+No unsupported Wazuh correlation syntax is claimed.
 
 ## MITRE ATT&CK
 
 **Status: TBD**
 
-No ATT&CK technique is pre-claimed.
-
-The final mapping must be determined from the actual behavior and telemetry observed during DET-019 execution.
+No ATT&CK technique is assigned solely from this benign validation process. The observed activity was administrative process execution used to validate telemetry.
 
 ## IOC / IOA / TTP
 
-**Status: NOT YET OBSERVED**
+No malicious IOC is claimed.
 
-No IOC, IOA, or TTP is recorded until the controlled test produces actual evidence.
+Observed validation artifacts include:
 
-## Triage
+- Account: `CORP\\admin`
+- Logon IDs: `0xAF52CC`, `0xAF52DD`, `0x2C54AA`
+- Process: `whoami.exe`
+- Parent: `cmd.exe`
 
-The eventual investigation should establish:
-
-1. Which account created the privileged logon.
-2. The relevant Windows Logon ID.
-3. Whether Event 4672 corresponds to that logon.
-4. Which Sysmon Event ID 1 process was created.
-5. Whether the process can be associated with the same logon session.
-6. What Wazuh telemetry and rule context were generated.
-7. Whether the observed relationship is sufficient for reliable detection.
-
-## Investigation
-
-Investigation evidence will be recorded only after the controlled test is executed.
-
-Potential investigation pivots include:
-
-- Windows Logon ID
-- account/domain
-- event timestamps
-- Sysmon ProcessGuid
-- process image
-- command line
-- parent process
-- Wazuh agent
-- Wazuh rule
-- Windows event record identifiers
-
-Only fields actually present in the resulting telemetry will be documented.
-
-## Evidence
-
-**Status: NOT YET COLLECTED**
-
-No screenshots, timestamps, event records, Wazuh alerts, queries, metrics, or findings are claimed before execution.
+These are test artifacts, not malicious indicators.
 
 ## Detection Gap
 
-To be determined from the actual test.
+The test identified a UAC/session-context boundary:
 
-The primary question is whether existing telemetry and Wazuh coverage provide sufficient linkage between:
+- Security 4624/4672 privileged session: `0xAF52CC`
+- Sysmon/Security process context observed separately: `0x2C54AA`
 
-```
-Privileged Logon
-      ↓
-Process Creation
-```
+Therefore, direct Security-to-Sysmon LogonId equality cannot be treated as universally reliable.
 
-within the same Windows session.
-
-## Improvement
-
-To be determined after the initial controlled test.
-
-Any improvement must address an evidence-backed detection gap rather than a hypothetical one.
+At the same time, Wazuh preserved the privileged Logon ID directly across 4672 and 4688, providing a viable correlation path for the observed elevated process events.
 
 ## Replay
 
 Not yet performed.
 
-Replay will be considered only after the initial detection behavior and any improvement are established.
-
 ## Metrics
 
 Not yet available.
 
-No detection rate, timing, false-positive rate, or correlation metric is claimed before execution.
+## Evidence
 
-## Snapshot Gate
+Detailed evidence is recorded in:
 
-**Pre-attack snapshot: NOT CREATED**
+`INVESTIGATION.md`
 
-The snapshot must be created and verified before executing the DET-019 test.
-
-## Execution Gate
-
-**DET-019 attack/test: NOT STARTED**
-
-Do not execute until:
-
-- the README is committed,
-- the relevant pre-attack snapshot exists,
-- and the snapshot state is verified.
+No screenshots or unobserved results are claimed.
 
 ## Status
 
-**CURRENT / NOT STARTED**
-
-This document establishes the DET-019 scenario and its evidence requirements. It does not represent execution results.
+**CURRENT / TELEMETRY VALIDATED / DETECTION IMPLEMENTATION PENDING**
