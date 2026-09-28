@@ -138,9 +138,11 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 ## Current State
 
 - DET-001 → DET-018: COMPLETED
-- DET-019: NEXT
+- DET-019: CURRENT / NOT STARTED
 - Current phase: Phase 2 — AD + Endpoint Telemetry + Detection Engineering
-- No DET-019 attack/test is defined by this artifact.
+- DET-019 selected scenario: Privileged Logon → Process Creation Correlation
+- No DET-019 attack/test has been executed.
+- DET-019 requires persistent documentation and a pre-attack snapshot before execution.
 - DET-019 must be recovered from the actual project sequence before execution.
 
 ## Recovery Rule
