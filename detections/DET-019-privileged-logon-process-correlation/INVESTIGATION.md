@@ -255,11 +255,44 @@ The Sysmon process-context Logon ID cannot automatically be substituted for the 
 
 **Correlation path: VALIDATED**
 
-**Persistent custom detection: NOT IMPLEMENTED**
+**Persistent custom detection: IMPLEMENTED**
 
-No custom Wazuh correlation rule was deployed during this test.
+Native Wazuh rule `100107` was added to `/var/ossec/etc/rules/local_rules.xml` with `frequency="2"` and `timeframe="60"`, correlating rule `67028` (4672) with rule `67027` (4688) using `win.eventdata.subjectLogonId`.
 
-The next engineering phase is to evaluate implementation options using the observed fields, beginning with native Wazuh capabilities before introducing custom correlation logic.
+The pre-change rules file was backed up before modification. The initial `frequency="1"` configuration was rejected by Wazuh because frequency must be greater than 1; the rule was corrected to `frequency="2"`.
+
+`wazuh-analysisd -t` then completed successfully, and `wazuh-manager` restarted successfully and reported active.
+
+### Positive validation
+
+A fresh controlled privileged session produced three `100107` alerts:
+
+| Wazuh time | Event Record ID | Process | Logon ID |
+|---|---:|---|---|
+| 2026-09-28 06:48:00.482 | 34958 | `conhost.exe` | `0xe25141` |
+| 2026-09-28 06:48:01.530 | 34961 | `whoami.exe` | `0xe25141` |
+| 2026-09-28 06:48:01.561 | 34963 | `whoami.exe` | `0xe25141` |
+
+The three alerts occurred within approximately 1.1 seconds and demonstrate that the native 4672 → 4688 same-Logon-ID correlation fires.
+
+### Alert cardinality observation
+
+The rule generated one correlation alert for each qualifying 4688 event within the active correlation condition. Therefore one controlled privileged session produced three `100107` alerts.
+
+This behavior is documented as an observed tuning characteristic. No single-alert-per-session metric is claimed.
+
+### Negative validation
+
+After the positive test, an ordinary `whoami` execution was performed. No additional `100107` alert appeared in the subsequent check.
+
+### Current assessment
+
+- Native correlation logic: **PASS**
+- Positive validation: **PASS**
+- Negative validation: **PASS**
+- Alert cardinality tuning: **OPEN**
+
+The next tuning decision should be based on the desired alert unit (process-level correlation versus session-level correlation).
 
 ## 10. ATT&CK / IOC / TTP
 
