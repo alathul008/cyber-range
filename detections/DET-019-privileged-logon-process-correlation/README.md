@@ -1,6 +1,6 @@
 # DET-019 — Privileged Logon → Process Creation Correlation
 
-**Status:** EXECUTED / TELEMETRY VALIDATED / DETECTION NOT YET IMPLEMENTED
+**Status:** EXECUTED / TELEMETRY VALIDATED / DETECTION IMPLEMENTED / TUNING OBSERVED
 
 ## Objective
 
@@ -163,11 +163,51 @@ The validated privileged correlation key was:
 
 **Correlation design: VALIDATED**
 
-**Persistent custom detection: NOT YET IMPLEMENTED**
+**Persistent custom detection: IMPLEMENTED**
 
-The next engineering step is to determine whether the validated `4624 → 4672 → 4688` relationship can be implemented reliably using native Wazuh capabilities or requires a custom correlation mechanism.
+Native Wazuh rule `100107` was deployed and validated after configuration testing.
 
-No unsupported Wazuh correlation syntax is claimed.
+Rule logic:
+
+```xml
+<rule id="100107" level="12" frequency="2" timeframe="60">
+  <if_matched_sid>67028</if_matched_sid>
+  <same_field>win.eventdata.subjectLogonId</same_field>
+  <if_sid>67027</if_sid>
+</rule>
+```
+
+The rule correlates a 4672 privileged-logon event with subsequent 4688 process-creation events sharing the same `subjectLogonId` within the 60-second correlation window.
+
+Configuration validation with `wazuh-analysisd -t` passed, and the Wazuh manager restarted successfully with the rule loaded.
+
+### Positive validation
+
+A fresh controlled elevated `CORP\\admin` session generated three `100107` alerts using Logon ID `0xe25141`:
+
+- Event Record ID `34958` — `conhost.exe`
+- Event Record ID `34961` — `whoami.exe`
+- Event Record ID `34963` — `whoami.exe`
+
+The three alerts occurred within approximately 1.1 seconds and demonstrate that the native correlation path is functioning.
+
+### Alert cardinality observation
+
+The rule currently generates a correlation alert for each qualifying 4688 event that follows the matched 4672 condition within the correlation window. The controlled test therefore produced three alerts for the same privileged session.
+
+This is documented as a tuning observation, not hidden as a successful single-alert-per-session metric.
+
+### Negative validation
+
+A subsequent ordinary `whoami` execution did not produce an additional `100107` alert.
+
+### Current tuning status
+
+**Detection logic: VALIDATED**
+
+**Alert cardinality tuning: OPEN**
+
+No claim is made that the rule currently provides one alert per privileged session.
 
 ## MITRE ATT&CK
 
@@ -201,11 +241,20 @@ At the same time, Wazuh preserved the privileged Logon ID directly across 4672 a
 
 ## Replay
 
-Not yet performed.
+The controlled positive and negative validation sequence was executed after rule deployment.
+
+A formal repeatability/replay metric has not yet been established.
 
 ## Metrics
 
-Not yet available.
+Observed validation result:
+
+- Positive correlation: 3 `100107` alerts from 3 qualifying 4688 events in one controlled privileged session.
+- Negative test: no additional `100107` alert from the subsequent ordinary `whoami` execution.
+- Timeframe: 60 seconds.
+- Rule frequency: 2.
+
+These are validation observations, not production performance metrics.
 
 ## Evidence
 
@@ -217,4 +266,4 @@ No screenshots or unobserved results are claimed.
 
 ## Status
 
-**CURRENT / TELEMETRY VALIDATED / DETECTION IMPLEMENTATION PENDING**
+**CURRENT / TELEMETRY VALIDATED / DETECTION IMPLEMENTED / TUNING OPEN**
