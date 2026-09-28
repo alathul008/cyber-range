@@ -14,14 +14,15 @@ It does not modify or prescribe infrastructure changes.
     VMware Workstation Pro
              |
        +-----+-------------------------------+
-       |             |                       |
-     VMnet0        VMnet8                  VMnet1
-     Bridged        NAT                 Legacy host-only
-     Real LAN    192.168.150.0/24      192.168.195.0/24
-       |                    |
-       |                    v
-       |                 FW-01
-       |                pfSense
+       +-------------+-------------+-------------+
+                     |             |             |
+                   VMnet0        VMnet8        VMnet1
+                   Bridged        NAT       Legacy host-only
+                  Real LAN    192.168.150.0/24 192.168.195.0/24
+                     |             |
+                     |             v
+                     |           FW-01
+                     |          pfSense
        |                    |
        |        +-----------+-----------+-----------+
        |        |           |           |           |
@@ -39,7 +40,7 @@ It does not modify or prescribe infrastructure changes.
 
 VMnet0 represents the real LAN/bridged path and is not an enterprise lab segment.
 
-The lab enterprise, attack, and security zones are behind FW-01 on VMnet2–VMnet5.
+The four isolated lab segments (MGMT, ENTERPRISE, ATTACK, and SECURITY/SOC) are behind FW-01 on VMnet2–VMnet5. VMnet0 and VMnet1 are separate VMware networks; VMnet8 is the independent NAT-side upstream used by FW-01 WAN.
 
 VMnet8 provides the established NAT-side WAN path for FW-01.
 
@@ -178,7 +179,7 @@ No claim is made here that every future management workflow has been implemented
 
 VMnet8 is the VMware NAT network used by FW-01's WAN interface.
 
-The core enterprise, attack, and security networks remain separate from this NAT segment.
+The core MGMT, ENTERPRISE, ATTACK, and SECURITY/SOC networks remain separate from this NAT segment.
 
 ## 9. Host-Only Network Details
 
