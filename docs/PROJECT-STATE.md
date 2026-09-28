@@ -159,15 +159,16 @@ Recent architecture documentation commits:
 - `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
 - `3bbabb6843c480168a1b95c18d1628bb97a081ef` — `docs: clarify cyber range topology boundaries`
 - `e1756cb917e525d88beaff1bd9a0c6a4d4951235` — `architecture: add master architecture`
+- `40a0417cb9f274bb7c0f44b5f69cf8758b8cdc59` — `architecture: add cyber range asset inventory`
 
 ## Current Blockers
-1. Architecture documentation layer is still being built.
+1. Architecture documentation layer is still being built; asset inventory is now complete.
 2. DET-019 persistent documentation.
 3. DET-019 pre-attack snapshot.
 4. These gates must be completed before any DET-019 attack/test execution.
 
 ## Next Task
-Create and validate `architecture/asset-inventory.md`. Do not execute DET-019 while the architecture documentation layer is being established.
+Create and validate `architecture/security-boundaries.md`. Do not execute DET-019 while the architecture documentation layer is being established.
 
 Do not execute DET-019 yet.
 
