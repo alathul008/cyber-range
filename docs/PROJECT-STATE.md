@@ -153,22 +153,23 @@ DET-018 validated 4624 → 4672 correlation through Logon ID `0x2c5499`.
 - DET-019 ATT&CK mapping remains intentionally undetermined.
 
 ## Last Verified GitHub Commit
-**`3d7fa83e6a923f7138cdf96cac99bf4d8129c09a` — `docs: update architecture document index`**
+**`0749f2a56a126dc7f2fea2eacb80082017c4182b` — `architecture: add cyber range resource plan`**
 
 Recent architecture documentation commits:
 - `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
 - `3bbabb6843c480168a1b95c18d1628bb97a081ef` — `docs: clarify cyber range topology boundaries`
 - `e1756cb917e525d88beaff1bd9a0c6a4d4951235` — `architecture: add master architecture`
 - `40a0417cb9f274bb7c0f44b5f69cf8758b8cdc59` — `architecture: add cyber range asset inventory`
+- `0749f2a56a126dc7f2fea2eacb80082017c4182b` — `architecture: add cyber range resource plan`
 
 ## Current Blockers
-1. Architecture documentation layer is still being built; asset inventory, security-boundary specification, telemetry architecture, and operational profiles are now complete.
+1. Architecture documentation layer is still being built; asset inventory, security-boundary specification, telemetry architecture, operational profiles, and resource plan are now complete.
 2. DET-019 persistent documentation.
 3. DET-019 pre-attack snapshot.
 4. These gates must be completed before any DET-019 attack/test execution.
 
 ## Next Task
-Create and validate `architecture/resource-plan.md`. Do not execute DET-019 while the architecture documentation layer is being established.
+Create and validate `architecture/target-architecture.md`. Do not execute DET-019 while the architecture documentation layer is being established.
 
 Do not execute DET-019 yet.
 
