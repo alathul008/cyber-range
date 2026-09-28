@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Complete the architecture documentation layer while preserving the validated lab state and deterministic cross-chat recovery.
+Complete the architecture documentation layer, then resume DET-019 preparation while preserving the validated lab state and deterministic cross-chat recovery.
 
 ## Current DET
 **DET-019 — Privileged Logon → Process Creation Correlation**
@@ -153,7 +153,7 @@ DET-018 validated 4624 → 4672 correlation through Logon ID `0x2c5499`.
 - DET-019 ATT&CK mapping remains intentionally undetermined.
 
 ## Last Verified GitHub Commit
-**`0749f2a56a126dc7f2fea2eacb80082017c4182b` — `architecture: add cyber range resource plan`**
+**`5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004 detection-vs-correlation`**
 
 Recent architecture documentation commits:
 - `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
@@ -161,15 +161,19 @@ Recent architecture documentation commits:
 - `e1756cb917e525d88beaff1bd9a0c6a4d4951235` — `architecture: add master architecture`
 - `40a0417cb9f274bb7c0f44b5f69cf8758b8cdc59` — `architecture: add cyber range asset inventory`
 - `0749f2a56a126dc7f2fea2eacb80082017c4182b` — `architecture: add cyber range resource plan`
+- `7372bc81f2044e863fe45d94013aaf368a0f4c5d` — `architecture: add target architecture`
+- `296d891302f7ca3b905d822208de814089ce9586` — `architecture: add ADR-001`
+- `cef3be4b6a9a48ac2efe0acab007f0cb713f9e7f` — `architecture: add ADR-002`
+- `cc61678c447ae1de74cb2581ee08b5cc1e2a8f45` — `architecture: add ADR-003`
+- `5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004`
 
 ## Current Blockers
-1. Architecture documentation layer is still being built; asset inventory, security-boundary specification, telemetry architecture, operational profiles, and resource plan are now complete.
-2. DET-019 persistent documentation.
-3. DET-019 pre-attack snapshot.
-4. These gates must be completed before any DET-019 attack/test execution.
+1. DET-019 persistent documentation.
+2. DET-019 pre-attack snapshot.
+3. These gates must be completed before any DET-019 attack/test execution.
 
 ## Next Task
-Create and validate `architecture/target-architecture.md`. Do not execute DET-019 while the architecture documentation layer is being established.
+Prepare DET-019 persistent documentation, then create its pre-attack snapshot. Do not execute the DET-019 attack/test until both gates are complete.
 
 Do not execute DET-019 yet.
 
@@ -189,6 +193,8 @@ For DET-019:
 - `architecture/ARCHITECTURE.md`: master architecture.
 - `architecture/topology.md`: logical/virtual topology.
 - `architecture/network.md`: detailed network specification.
+- `architecture/target-architecture.md`: target 32-GB-class architecture and capability expansion.
+- `architecture/adr/`: architecture decision records.
 - DET-001 → DET-018 individual README artifacts: **PRESENT**.
 - DET-019 README: **NOT CREATED**.
 - DET-019 investigation evidence: **NOT CREATED**.
