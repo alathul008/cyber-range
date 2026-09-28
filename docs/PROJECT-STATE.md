@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Complete permanent documentation/state continuity so cross-chat recovery is deterministic.
+Complete the architecture documentation layer while preserving the validated lab state and deterministic cross-chat recovery.
 
 ## Current DET
 **DET-019 — Privileged Logon → Process Creation Correlation**
@@ -153,18 +153,21 @@ DET-018 validated 4624 → 4672 correlation through Logon ID `0x2c5499`.
 - DET-019 ATT&CK mapping remains intentionally undetermined.
 
 ## Last Verified GitHub Commit
-**`187c831ed615a4c9d216bf2205a8b1692be87919` — `docs: mark DET-019 current and not started`**
+**`3d7fa83e6a923f7138cdf96cac99bf4d8129c09a` — `docs: update architecture document index`**
 
-The immediately preceding canonical roadmap commit was:
-`0509102e462a7b90b5817c8b8b3f7d40eaed64d7` — `docs: add canonical detection roadmap`.
+Recent architecture documentation commits:
+- `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
+- `3bbabb6843c480168a1b95c18d1628bb97a081ef` — `docs: clarify cyber range topology boundaries`
+- `e1756cb917e525d88beaff1bd9a0c6a4d4951235` — `architecture: add master architecture`
 
 ## Current Blockers
-1. DET-019 persistent documentation.
-2. DET-019 pre-attack snapshot.
-3. These gates must be completed before any DET-019 attack/test execution.
+1. Architecture documentation layer is still being built.
+2. DET-019 persistent documentation.
+3. DET-019 pre-attack snapshot.
+4. These gates must be completed before any DET-019 attack/test execution.
 
 ## Next Task
-Prepare the persistent DET-019 README and pre-attack snapshot plan.
+Create and validate `architecture/asset-inventory.md`. Do not execute DET-019 while the architecture documentation layer is being established.
 
 Do not execute DET-019 yet.
 
@@ -178,6 +181,12 @@ For DET-019:
 ## Documentation State
 - `docs/DETECTION-ROADMAP.md`: present and canonical.
 - `docs/PROJECT-STATE.md`: this permanent cross-chat handoff.
+- `architecture/ARCHITECTURE.md`: present and canonical high-level architecture.
+- `architecture/topology.md`: present and validated against the established architecture.
+- `architecture/network.md`: present and validated against the established network model.
+- `architecture/ARCHITECTURE.md`: master architecture.
+- `architecture/topology.md`: logical/virtual topology.
+- `architecture/network.md`: detailed network specification.
 - DET-001 → DET-018 individual README artifacts: **PRESENT**.
 - DET-019 README: **NOT CREATED**.
 - DET-019 investigation evidence: **NOT CREATED**.
