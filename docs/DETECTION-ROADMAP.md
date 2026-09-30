@@ -26,6 +26,8 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 | DET-016 | Failed-logon investigation | COMPLETED | Event 4625 + Wazuh rule 60122. Controlled local bad-password test; documented ::1/local-source limitation. |
 | DET-017 | Successful-logon investigation | COMPLETED | Event 4624 + Wazuh rule 60118. Controlled local interactive logon; pivoted by Logon ID. Documented ::1/local-source caveat. |
 | DET-018 | Successful logon → special-privilege telemetry | COMPLETED | Event 4624 and 4672 correlated by Logon ID 0x2c5499. Windows 4672 Record ID 33066 and Wazuh rule 67028 validated. Native T1484 mapping is metadata, not proof of Domain Policy Modification. |
+| DET-019 | Privileged Logon → Process Creation Correlation | COMPLETED | Native Wazuh rule 100107 validated with 4672 → 4688 correlation by subjectLogonId. Positive and negative validation completed; alert-cardinality tuning remains open. |
+| DET-020 | PowerShell Process → Network Connection Correlation | COMPLETED | Native Wazuh correlation rule 100108 validated using 92027 → 92101 with same win.eventdata.processGuid. Positive and negative validation completed. |
 
 ## DET-010 Evidence
 
@@ -124,6 +126,18 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 - Source ::1 indicates local controlled activity on DC-01.
 - Finding is privileged-logon telemetry; no maliciousness or remote-access claim.
 
+## DET-020 Evidence
+
+- Wazuh custom rule: 100108, level 12.
+- Parent/process rule: 92027.
+- Network base rule: 92101, level 0.
+- Correlation field: win.eventdata.processGuid.
+- Positive validation: one 100108 alert after controlled PowerShell HTTP activity.
+- Positive Event 3 Record ID: 3831499.
+- Negative validation: curl.exe produced no additional 100108 alert; total remained 1.
+- Example Sysmon Event 1 → Event 3 delta: 4.851 seconds.
+- Rollback backup: /var/ossec/etc/rules/local_rules.xml.det020-prechange.
+
 ## Detection Engineering Lessons
 
 1. Detection ≠ correlation. DET-009 remains the baseline lesson.
@@ -137,13 +151,12 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 
 ## Current State
 
-- DET-001 → DET-018: COMPLETED
-- DET-019: CURRENT / NOT STARTED
+- DET-001 → DET-020: COMPLETED
+- DET-019: COMPLETED / DETECTION IMPLEMENTED / TUNING OPEN
+- DET-020: COMPLETED / DETECTION IMPLEMENTED / POSITIVE + NEGATIVE VALIDATED
 - Current phase: Phase 2 — AD + Endpoint Telemetry + Detection Engineering
-- DET-019 selected scenario: Privileged Logon → Process Creation Correlation
-- No DET-019 attack/test has been executed.
-- DET-019 requires persistent documentation and a pre-attack snapshot before execution.
-- DET-019 must be recovered from the actual project sequence before execution.
+- DET-020 established ProcessGuid-based PowerShell process → network correlation in Wazuh.
+- No malicious ATT&CK claim is made from the benign validation activity.
 
 ## Recovery Rule
 
