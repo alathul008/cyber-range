@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Complete the architecture documentation layer, then resume DET-019 preparation while preserving the validated lab state and deterministic cross-chat recovery.
+Continue Phase 2 detection engineering after validating DET-019 and DET-020, preserving the validated lab state and deterministic cross-chat recovery.
 
 ## Current DET
 **DET-019 — Privileged Logon → Process Creation Correlation**
@@ -34,7 +34,7 @@ Investigation
 ATT&CK mapping must be determined from actual observed behavior. No technique is pre-claimed.
 
 ## Completed DETs
-**DET-001 → DET-018: COMPLETED**
+**DET-001 → DET-020: COMPLETED**
 
 ## Documentation Audit
 Live GitHub repository tree was audited on 2026-09-28.
@@ -133,11 +133,14 @@ Validated telemetry includes:
 - System 7045 — service installed
 - Sysmon Event 1 — process creation
 - Sysmon Event 11 — file creation
+- Sysmon Event 3 — network connection
 
 DET-018 validated 4624 → 4672 correlation through Logon ID `0x2c5499`.
+DET-019 validated 4672 → 4688 correlation through subjectLogonId using Wazuh rule 100107.
+DET-020 validated PowerShell Event 1 → Event 3 correlation through ProcessGuid using Wazuh rule 100108.
 
 ## Detection-Engineering State
-- DET-001 → DET-018 completed.
+- DET-001 → DET-020 completed.
 - Native Wazuh coverage is used where sufficient.
 - Custom rules are used where contextual value was demonstrated.
 - Detection and correlation are treated as separate engineering problems.
@@ -146,14 +149,12 @@ DET-018 validated 4624 → 4672 correlation through Logon ID `0x2c5499`.
 - Controlled benign tests and negative validation are recorded where actually performed.
 
 ## Known Gaps
-- DET-019 has not been executed.
-- DET-019 persistent documentation has not yet been created.
-- DET-019 pre-attack snapshot has not yet been created.
-- DET-019 privileged-logon → process-creation session correlation has not yet been validated.
-- DET-019 ATT&CK mapping remains intentionally undetermined.
+- DET-019 alert-cardinality tuning remains open; the validated rule can generate multiple alerts for multiple qualifying 4688 events in one privileged session.
+- DET-020 has not undergone long-term replay/coverage measurement or further contextual tuning.
+- No malicious ATT&CK claim is made from the benign DET-020 validation.
 
 ## Last Verified GitHub Commit
-**`5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004 detection-vs-correlation`**
+**`58fb930da5e1c633ae20d0092a7e214d86948e7a` — `docs: add DET-020 investigation evidence`**
 
 Recent architecture documentation commits:
 - `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
@@ -173,9 +174,7 @@ Recent architecture documentation commits:
 3. These gates must be completed before any DET-019 attack/test execution.
 
 ## Next Task
-Prepare DET-019 persistent documentation, then create its pre-attack snapshot. Do not execute the DET-019 attack/test until both gates are complete.
-
-Do not execute DET-019 yet.
+Proceed to the next planned detection-engineering task after preserving DET-019 and DET-020 evidence. Do not retune either rule without a new validation requirement.
 
 ## Snapshot State
 Earlier controlled scenarios have documented pre-attack snapshots, including DET-010 and DET-013.
