@@ -28,6 +28,7 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 | DET-018 | Successful logon → special-privilege telemetry | COMPLETED | Event 4624 and 4672 correlated by Logon ID 0x2c5499. Windows 4672 Record ID 33066 and Wazuh rule 67028 validated. Native T1484 mapping is metadata, not proof of Domain Policy Modification. |
 | DET-019 | Privileged Logon → Process Creation Correlation | COMPLETED | Native Wazuh rule 100107 validated with 4672 → 4688 correlation by subjectLogonId. Positive and negative validation completed; alert-cardinality tuning remains open. |
 | DET-020 | PowerShell Process → Network Connection Correlation | COMPLETED | Native Wazuh correlation rule 100108 validated using 92027 → 92101 with same win.eventdata.processGuid. Positive and negative validation completed. |
+| DET-021 | PowerShell Download Chain Telemetry Boundary | COMPLETED | Controlled PowerShell HTTP download validated Event 1 → Event 3 correlation and Wazuh 100108 ingestion. Downloaded file was confirmed on disk, but Event 11 for that exact file and same ProcessGuid was not observed; no three-stage rule created. |
 
 ## DET-010 Evidence
 
@@ -154,8 +155,10 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 - DET-001 → DET-020: COMPLETED
 - DET-019: COMPLETED / DETECTION IMPLEMENTED / TUNING OPEN
 - DET-020: COMPLETED / DETECTION IMPLEMENTED / POSITIVE + NEGATIVE VALIDATED
+- DET-021: COMPLETED / TELEMETRY INVESTIGATION / BOUNDARY DOCUMENTED
 - Current phase: Phase 2 — AD + Endpoint Telemetry + Detection Engineering
 - DET-020 established ProcessGuid-based PowerShell process → network correlation in Wazuh.
+- DET-021 validated the PowerShell → network leg and documented the unverified downloaded-file Event 11 boundary.
 - No malicious ATT&CK claim is made from the benign validation activity.
 
 ## Recovery Rule
