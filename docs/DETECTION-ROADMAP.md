@@ -150,6 +150,14 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 7. Do not claim remote activity when controlled tests use ::1/local sources.
 8. Treat permanent baseline changes separately from temporary test configuration.
 
+## Post-DET-021 Sequencing Decision
+
+DET-001 through DET-021 are complete. The roadmap does not explicitly name the next scenario after DET-021. The target architecture places the project in **Stage C — Detection Depth**, with **Stage D — Network Visibility** subsequent to Stage C.
+
+Therefore, the sequencing decision is to remain in Stage C and next evaluate/build an **AD/lateral-movement detection and investigation scenario** using the existing DC-01, WIN-01, ARCH-01, and Wazuh foundation. This is intentionally not assigned a DET number yet.
+
+Rationale: AD/lateral movement is directly aligned with the existing enterprise identity/endpoint foundation and Stage C detection-depth objective, while network visibility (Zeek/Suricata) is explicitly Stage D. No VMware, pfSense, Zeek, or Suricata change is authorized by this decision.
+
 ## Current State
 
 - DET-001 → DET-020: COMPLETED
