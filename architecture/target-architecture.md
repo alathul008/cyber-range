@@ -264,6 +264,7 @@ The target should expand in dependency order:
 - threat hunting
 - detection tuning
 - replay and metrics
+- **Sequencing decision after DET-021:** deepen the existing AD/endpoint detection model with an AD/lateral-movement scenario before advancing to Stage D network visibility.
 
 ### Stage D — Network visibility
 - network telemetry
@@ -285,7 +286,7 @@ The target should expand in dependency order:
 - cloud security
 - AI-assisted SOC workflows
 
-The exact order after Stage C may change based on measured prerequisites and project goals.
+The exact order after Stage C may change based on measured prerequisites and project goals. The current post-DET-021 sequencing decision is explicitly documented above; it does not authorize implementation of a new DET number yet.
 
 ## 9. Target Architecture Integrity
 
