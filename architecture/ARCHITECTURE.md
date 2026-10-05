@@ -2,7 +2,7 @@
 
 **Architecture status:** Current project architecture documented from established project state
 **Current phase:** Phase 2 — AD + Endpoint Telemetry + Detection Engineering
-**Current position:** DET-001 → DET-018 COMPLETED; DET-019 CURRENT / NOT STARTED
+**Current position:** DET-001 → DET-021 COMPLETED; DET-021 CURRENT COMPLETED / NEXT CAPABILITY SELECTION
 
 This is the high-level architecture reference for the Cyber Range. It separates the architecture currently implemented and/or validated from the longer-term 32-GB-class target and future capabilities.
 
@@ -209,7 +209,7 @@ DET-011 includes a validated read-only Python Indexer correlation prototype; it 
            ↓
     Replay / Validation
 
-Completed sequence: DET-001 → DET-018.
+Completed sequence: DET-001 → DET-021.
 
 Established patterns include native Wazuh coverage where sufficient, custom contextual rules where demonstrated, Windows Logon ID/SID pivots, and explicit separation of vendor ATT&CK metadata from what evidence proves.
 
@@ -305,29 +305,15 @@ IMPLEMENTED does not automatically mean VALIDATED. PLANNED/FUTURE does not mean 
 
 **Phase:** Phase 2 — AD + Endpoint Telemetry + Detection Engineering
 
-**Completed:** DET-001 → DET-018 COMPLETED
+**Completed:** DET-001 → DET-021 COMPLETED
 
-**Current:** DET-019 CURRENT / NOT STARTED
+**Latest completed:** DET-021 — PowerShell Download Chain Telemetry Boundary
 
-DET-019 is Privileged Logon → Process Creation Correlation.
+DET-019 validated privileged-logon → process-creation correlation using subjectLogonId.
+DET-020 validated PowerShell process → network correlation using ProcessGuid.
+DET-021 validated the PowerShell download telemetry boundary: Event 1 → Event 3 was observed, while Event 11 for the exact downloaded file/ProcessGuid was not observed.
 
-Conceptual chain:
-
-    4624 Successful Logon
-            ↓
-    4672 Special Privileges
-            ↓
-    Sysmon Event ID 1
-            ↓
-    Process execution
-            ↓
-    Wazuh
-            ↓
-    Session correlation
-            ↓
-    Investigation
-
-DET-019 has not been executed. Its ATT&CK mapping must be determined from actual observed behavior. Persistent documentation and a pre-attack snapshot are required before execution.
+The next task is to select the next major capability from the established roadmap and target architecture. No new DET number should be invented without a defined objective and evidence plan.
 
 ## 18. Documentation Architecture
 
