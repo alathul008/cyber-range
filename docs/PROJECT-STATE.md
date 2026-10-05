@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Continue Phase 2 detection engineering after validating DET-019 and DET-020, preserving the validated lab state and deterministic cross-chat recovery.
+Close the Phase 2 detection-engineering documentation gate after DET-021, then select the next major capability from the architecture and roadmap without inventing a new DET.
 
 ## Current DET
 **DET-021 — PowerShell Download Chain Telemetry Boundary**
@@ -140,7 +140,7 @@ DET-019 validated 4672 → 4688 correlation through subjectLogonId using Wazuh r
 DET-020 validated PowerShell Event 1 → Event 3 correlation through ProcessGuid using Wazuh rule 100108.
 
 ## Detection-Engineering State
-- DET-001 → DET-020 completed.
+- DET-001 → DET-021 completed.
 - Native Wazuh coverage is used where sufficient.
 - Custom rules are used where contextual value was demonstrated.
 - Detection and correlation are treated as separate engineering problems.
@@ -164,7 +164,7 @@ DET-020 validated PowerShell Event 1 → Event 3 correlation through ProcessGuid
 - No malicious ATT&CK claim is made from the benign DET-020 validation.
 
 ## Last Verified GitHub Commit
-**`58fb930da5e1c633ae20d0092a7e214d86948e7a` — `docs: add DET-020 investigation evidence`**
+**`0c173247689c55a6fad20050a490e99093f511e3` — `docs: update project state through DET-021`**
 
 Recent architecture documentation commits:
 - `467f96067ffa5bbbf98b868a8d8d7094d47e1d54` — `docs: add cyber range network specification`
@@ -179,7 +179,9 @@ Recent architecture documentation commits:
 - `5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004`
 
 ## Current Blockers
-1. DET-019 persistent documentation and pre-attack snapshot remain separate project gates.
+None blocking the next planning gate.
+
+Known engineering gaps remain non-blocking: DET-019 alert-cardinality tuning and DET-020 long-term replay/coverage measurement.
 
 ## Next Task
 Proceed to the next planned detection-engineering task after preserving DET-021 evidence. Do not retune DET-019 or DET-020 without a new validation requirement.
@@ -188,8 +190,11 @@ Proceed to the next planned detection-engineering task after preserving DET-021 
 Earlier controlled scenarios have documented pre-attack snapshots, including DET-010 and DET-013.
 
 For DET-019:
-- Pre-attack snapshot: **NOT CREATED**
-- Attack/test: **NOT STARTED**
+- Detection implementation: **VALIDATED**
+- Positive validation: **COMPLETED**
+- Negative validation: **COMPLETED**
+- Alert-cardinality tuning: **OPEN / NON-BLOCKING**
+- Existing project evidence is the source of truth; no new snapshot is required merely to reopen the completed detection.
 
 ## Documentation State
 - `docs/DETECTION-ROADMAP.md`: present and canonical.
@@ -203,8 +208,9 @@ For DET-019:
 - `architecture/target-architecture.md`: target 32-GB-class architecture and capability expansion.
 - `architecture/adr/`: architecture decision records.
 - DET-001 → DET-018 individual README artifacts: **PRESENT**.
-- DET-019 README: **NOT CREATED**.
-- DET-019 investigation evidence: **NOT CREATED**.
+- DET-019 implementation evidence: **PRESENT in live GitHub history**.
+- DET-020 investigation evidence: **PRESENT in live GitHub history**.
+- DET-021 README and investigation evidence: **PRESENT in live GitHub history**.
 
 ## Cross-Chat Recovery Procedure
 At the start of every new project chat:
