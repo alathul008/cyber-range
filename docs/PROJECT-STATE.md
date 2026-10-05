@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Close the Phase 2 detection-engineering documentation gate after DET-021, then select the next major capability from the architecture and roadmap without inventing a new DET.
+Stage C sequencing is now documented after DET-021. The next capability is an AD/lateral-movement detection and investigation scenario using the existing architecture; no DET-022 has been created.
 
 ## Current DET
 **DET-021 — PowerShell Download Chain Telemetry Boundary**
@@ -187,7 +187,7 @@ None blocking the next planning gate.
 Known engineering gaps remain non-blocking: DET-019 alert-cardinality tuning and DET-020 long-term replay/coverage measurement.
 
 ## Next Task
-Proceed to the next planned detection-engineering task after preserving DET-021 evidence. Do not retune DET-019 or DET-020 without a new validation requirement.
+Define the AD/lateral-movement scenario objective, expected telemetry, investigation pivots, and validation plan. Do not assign a DET number or begin implementation until the scenario definition is approved.
 
 ## Snapshot State
 Earlier controlled scenarios have documented pre-attack snapshots, including DET-010 and DET-013.
