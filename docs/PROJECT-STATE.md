@@ -7,11 +7,11 @@
 Continue Phase 2 detection engineering after validating DET-019 and DET-020, preserving the validated lab state and deterministic cross-chat recovery.
 
 ## Current DET
-**DET-019 — Privileged Logon → Process Creation Correlation**
+**DET-021 — PowerShell Download Chain Telemetry Boundary**
 
-**Status: CURRENT / NOT STARTED**
+**Status: COMPLETED / TELEMETRY BOUNDARY DOCUMENTED**
 
-No DET-019 attack or test has been executed.
+DET-021 controlled benign PowerShell HTTP download testing is complete. Event 1 → Event 3 correlation was validated through ProcessGuid and existing Wazuh rule 100108. The downloaded file was confirmed on disk, but Sysmon Event 11 for that exact file and ProcessGuid was not observed. No new three-stage Wazuh rule was created.
 
 Conceptual chain:
 
@@ -34,7 +34,7 @@ Investigation
 ATT&CK mapping must be determined from actual observed behavior. No technique is pre-claimed.
 
 ## Completed DETs
-**DET-001 → DET-020: COMPLETED**
+**DET-001 → DET-021: COMPLETED**
 
 ## Documentation Audit
 Live GitHub repository tree was audited on 2026-09-28.
@@ -148,6 +148,16 @@ DET-020 validated PowerShell Event 1 → Event 3 correlation through ProcessGuid
 - Native/vendor ATT&CK metadata is distinguished from what observed evidence proves.
 - Controlled benign tests and negative validation are recorded where actually performed.
 
+## DET-021 State
+- PowerShell Event 1: validated.
+- Sysmon Event 3: validated.
+- Wazuh Event 3 ingestion: validated.
+- Existing rule 100108 fired.
+- Downloaded file: confirmed on disk.
+- Sysmon Event 11 for the downloaded file: not observed.
+- Three-stage Event 1 → Event 3 → Event 11 correlation: not validated.
+- New Wazuh rule: not created.
+
 ## Known Gaps
 - DET-019 alert-cardinality tuning remains open; the validated rule can generate multiple alerts for multiple qualifying 4688 events in one privileged session.
 - DET-020 has not undergone long-term replay/coverage measurement or further contextual tuning.
@@ -169,12 +179,10 @@ Recent architecture documentation commits:
 - `5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004`
 
 ## Current Blockers
-1. DET-019 persistent documentation.
-2. DET-019 pre-attack snapshot.
-3. These gates must be completed before any DET-019 attack/test execution.
+1. DET-019 persistent documentation and pre-attack snapshot remain separate project gates.
 
 ## Next Task
-Proceed to the next planned detection-engineering task after preserving DET-019 and DET-020 evidence. Do not retune either rule without a new validation requirement.
+Proceed to the next planned detection-engineering task after preserving DET-021 evidence. Do not retune DET-019 or DET-020 without a new validation requirement.
 
 ## Snapshot State
 Earlier controlled scenarios have documented pre-attack snapshots, including DET-010 and DET-013.
