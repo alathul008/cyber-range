@@ -4,7 +4,7 @@
 
 A practical, isolated cybersecurity range built with VMware Workstation Pro on Windows 11. The project is designed around measurable security workflows rather than a collection of disconnected tools.
 
-> **Current status:** DET-001 → DET-018 completed. DET-019 is the current detection-engineering objective and has not yet been executed.
+> **Current status:** DET-001 → DET-021 completed. DET-021 is the latest completed detection-engineering objective; the next major capability is now selected from the established architecture and roadmap.
 
 ---
 
@@ -263,8 +263,10 @@ Individual DET artifacts live under `detections/`.
 - AD + endpoint telemetry
 - Wazuh/Sysmon
 - Detection engineering
-- DET-001 → DET-018 completed
-- DET-019 preparation
+- DET-001 → DET-021 completed
+- DET-019 privileged-logon → process correlation validated
+- DET-020 PowerShell process → network correlation validated
+- DET-021 PowerShell download telemetry boundary documented
 
 ### Next capability layers
 
