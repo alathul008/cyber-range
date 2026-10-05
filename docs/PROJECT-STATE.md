@@ -37,7 +37,7 @@ ATT&CK mapping must be determined from actual observed behavior. No technique is
 **DET-001 → DET-021: COMPLETED**
 
 ## Documentation Audit
-Live GitHub repository tree was audited on 2026-09-28.
+Live GitHub repository state was revalidated on 2026-10-05.
 
 | DET | README | Status |
 |---|---|---|
@@ -59,6 +59,9 @@ Live GitHub repository tree was audited on 2026-09-28.
 | DET-016 | Present | COMPLETED |
 | DET-017 | Present | COMPLETED |
 | DET-018 | Present | COMPLETED |
+| DET-019 | Present in live history | COMPLETED |
+| DET-020 | Present in live history | COMPLETED |
+| DET-021 | Present in live history | COMPLETED |
 
 **Audit result: no individual README is missing for DET-001 through DET-018 in the current GitHub tree.**
 
@@ -207,7 +210,7 @@ For DET-019:
 - `architecture/network.md`: detailed network specification.
 - `architecture/target-architecture.md`: target 32-GB-class architecture and capability expansion.
 - `architecture/adr/`: architecture decision records.
-- DET-001 → DET-018 individual README artifacts: **PRESENT**.
+- DET-001 → DET-021 detection/investigation documentation: **PRESENT in live GitHub history**.
 - DET-019 implementation evidence: **PRESENT in live GitHub history**.
 - DET-020 investigation evidence: **PRESENT in live GitHub history**.
 - DET-021 README and investigation evidence: **PRESENT in live GitHub history**.
