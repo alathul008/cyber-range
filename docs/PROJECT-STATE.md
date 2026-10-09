@@ -187,7 +187,18 @@ None blocking the next planning gate.
 Known engineering gaps remain non-blocking: DET-019 alert-cardinality tuning and DET-020 long-term replay/coverage measurement.
 
 ## Next Task
-Define the AD/lateral-movement scenario objective, expected telemetry, investigation pivots, and validation plan. Do not assign a DET number or begin implementation until the scenario definition is approved.
+Review the documented controlled WinRM evidence in `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`. Continue the Stage C AD/lateral-movement scenario by validating the event timeline, defining a benign negative/control test, and specifying investigation and replay criteria. Do not assign a DET number until the scenario scope and validation plan are explicitly approved.
+
+## AD/Lateral-Movement WinRM Evidence — 2026-10-09
+- Evidence record: `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`.
+- Controlled Evil-WinRM session from ARCH-01 (`10.10.30.100`) to WIN-01 (`10.10.20.100`) over TCP 5985 using `CORP\Administrator`.
+- Wazuh native rule 92110 fired on WIN-01 Sysmon Event ID 3 for source `10.10.30.100:34504` to destination `10.10.20.100:5985`; event time `2026-10-09 07:00:15.404Z`.
+- Wazuh custom rule 100107 fired on Windows Security Event ID 4688 records for `whoami.exe` and `conhost.exe`, with Logon ID `0x4c69ba` and parent/process activity including `wsmprovhost.exe`.
+- Native T1021.006 metadata on rule 92110 is recorded as rule metadata, not proof of malicious intent.
+- The test validates separate network and process detections. A single cross-rule correlation joining 92110 and 100107 has **not** been validated.
+- Negative/control test, response validation, replay metrics, and false-positive rate remain unrecorded/unmeasured.
+- Temporary WinRM firewall exceptions remain in place unless separately verified and changed; do not claim cleanup occurred.
+- No DET number assigned. DET-001 → DET-021 remain completed. Stage C continues; Stage D network visibility is not started.
 
 ## Snapshot State
 Earlier controlled scenarios have documented pre-attack snapshots, including DET-010 and DET-013.
