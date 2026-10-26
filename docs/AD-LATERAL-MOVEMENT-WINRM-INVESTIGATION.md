@@ -111,3 +111,33 @@ During this test, temporary lab firewall exceptions were used to permit ARCH-01 
 ## Evidence Integrity
 
 This record reflects the alert output inspected on 2026-10-09. It records only observed events and explicitly marks unperformed or unvalidated work. No new DET number is assigned.
+
+
+## 2026-10-26 Rule 100107 Gate Review
+
+This is a documentation/evidence review checkpoint; no Wazuh rule, endpoint permission, firewall, or VMware setting was changed.
+
+### Confirmed from the existing repository record
+
+The documented DET-019 definition of rule `100107` is:
+
+```xml
+<rule id="100107" level="12" frequency="2" timeframe="60">
+  <if_matched_sid>67028</if_matched_sid>
+  <same_field>win.eventdata.subjectLogonId</same_field>
+  <if_sid>67027</if_sid>
+</rule>
+```
+
+The documented logic depends on the native rule `67028` (Security Event 4672), the current-event parent `67027` (Security Event 4688), and a matching `win.eventdata.subjectLogonId` within the configured correlation window. It is **not** a general 4624-to-process rule, and Sysmon Event 1 or Event 3 alone does not satisfy its documented 4672/4688 conditions.
+
+The already-recorded Alice evidence identifies Logon ID `0x6e737d` in the successful 4624 and process-creation evidence, while the documented search found no `100107` alert for that ID. This absence does not, by itself, prove why the rule did not fire.
+
+### Root-cause status: NOT YET CONCLUSIVE
+
+The next evidence gate is to check for a rule `67028` / Event 4672 record on WIN-01 whose `subjectLogonId` is `0x6e737d`, around the Alice session time. The current runtime contents of `/var/ossec/etc/rules/local_rules.xml` have not been independently re-read during this checkpoint, so the repository's documented rule definition must not be treated as fresh proof of the active configuration.
+
+- If no matching 4672 exists, the documented correlation prerequisite was absent for that session.
+- If one exists, compare its actual field value and timestamp with the qualifying 4688 events and check the deployed rule configuration before assigning a cause.
+
+No rule change is proposed or authorized at this stage.
