@@ -284,3 +284,13 @@ Never invent commands, timestamps, screenshots, metrics, findings, telemetry, or
 
 ### Handoff Prompt
 The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](NEW-CHAT-HANDOFF-PROMPT.md). At the start of a new chat, inspect the live repository, especially this file, `docs/DETECTION-ROADMAP.md`, `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`, and relevant architecture documents. Live GitHub state takes precedence if the prompt is stale.
+
+
+## Current Investigation Checkpoint — 2026-10-26
+
+- Current task remains the Alice WinRM Logon ID `0x6e737d` / Wazuh rule `100107` mismatch; no DET-022 is assigned.
+- Existing evidence confirms Security 4624 successful network logon, Security 4688 process creation involving `wsmprovhost.exe` and `whoami.exe`, Sysmon Event 1 process telemetry, and Sysmon Event 3 WinRM network activity detected by native rule `92110`.
+- The documented DET-019 rule `100107` uses `if_matched_sid=67028`, `if_sid=67027`, and `same_field=win.eventdata.subjectLogonId` with a 60-second timeframe. The intended 4672 prerequisite is important: this rule is not generic successful-logon-to-process correlation.
+- No `100107` alert for Alice's `0x6e737d` was found in the previously documented search. The root cause remains **unconfirmed** until a matching Event 4672 / rule `67028` is checked and the active runtime rule file is verified.
+- No detection rule, user/group membership, firewall, VMware network, or endpoint permission was changed during this review.
+- **Next single action:** Search Wazuh for rule `67028` on WIN-01 with `data.win.eventdata.subjectLogonId:"0x6e737d"` near `2026-10-10T06:31:10.841Z`. Inspect the matching event and timestamp; do not change configuration yet.
