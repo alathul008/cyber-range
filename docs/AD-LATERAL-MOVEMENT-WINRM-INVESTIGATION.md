@@ -141,3 +141,14 @@ The next evidence gate is to check for a rule `67028` / Event 4672 record on WIN
 - If one exists, compare its actual field value and timestamp with the qualifying 4688 events and check the deployed rule configuration before assigning a cause.
 
 No rule change is proposed or authorized at this stage.
+
+
+### Follow-up evidence — 4672 username and Logon ID searches
+
+On 2026-10-26, the Wazuh Threat Hunting Events view was queried for `agent.name:WIN-01 AND rule.id:67028` across the last 90 days. It returned 130 hits. The inspected event was Windows Security Event 4672, Record ID 50179, account `CORP\\Administrator`, Logon ID `0x43b36e`, with original Windows event time `2026-10-10T04:58:24.4744393Z`.
+
+Two narrower searches returned no results:
+- `agent.name:WIN-01 AND rule.id:67028 AND data.win.eventdata.subjectLogonId:"0x6e737d"`
+- `agent.name:WIN-01 AND rule.id:67028 AND data.win.eventdata.subjectUserName:alice`
+
+These results establish only that the selected Wazuh view returned no hits for those exact filters. They do not yet prove Alice had no Event 4672 because username/field representation and time/index scope have not been independently ruled out. Root cause remains unconfirmed. Next, search WIN-01 events by both 4624 target account and 4672/4688 subject account fields without restricting the rule ID.
