@@ -294,3 +294,12 @@ The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](
 - No `100107` alert for Alice's `0x6e737d` was found in the previously documented search. The root cause remains **unconfirmed** until a matching Event 4672 / rule `67028` is checked and the active runtime rule file is verified.
 - No detection rule, user/group membership, firewall, VMware network, or endpoint permission was changed during this review.
 - **Next single action:** Search Wazuh for rule `67028` on WIN-01 with `data.win.eventdata.subjectLogonId:"0x6e737d"` near `2026-10-10T06:31:10.841Z`. Inspect the matching event and timestamp; do not change configuration yet.
+
+
+### 2026-10-26 follow-up — Alice 4672 query results
+
+- Query `agent.name:WIN-01 AND rule.id:67028` returned 130 hits over Last 90 days.
+- Inspected Event 4672: `CORP\\Administrator`, Logon ID `0x43b36e`, Windows Event Record ID `50179`, original Windows timestamp `2026-10-10T04:58:24.4744393Z`.
+- Exact Logon ID filter `0x6e737d` returned zero hits; exact `subjectUserName:alice` filter also returned zero hits.
+- This does not yet prove absence of Alice's 4672; root cause remains **unconfirmed** until account-field representation and the related event timeline are checked.
+- Next single task: search WIN-01 events using both 4624 `targetUserName` and 4672/4688 `subjectUserName` account fields without restricting the rule ID.
