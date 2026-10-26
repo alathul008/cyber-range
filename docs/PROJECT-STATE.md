@@ -248,3 +248,39 @@ If exact historical evidence cannot be recovered, write:
 > Exact evidence not recovered from available project history.
 
 Never invent commands, timestamps, screenshots, metrics, findings, telemetry, or ATT&CK coverage.
+
+
+## Current Handoff Update — 2026-10-26
+
+### Current Phase and Task
+- Phase: **Stage C — Detection Depth**.
+- DET-001 through DET-021 remain completed/documented.
+- **No DET-022 exists.**
+- Current task: investigate the already-collected Alice WinRM session evidence and the rule 100107 correlation mismatch. Do not repeat screenshots of the same record or modify permissions/rules before understanding the evidence.
+
+### Alice WinRM Evidence (Oct 10, 2026)
+- Security Event 4624 on WIN-01 confirms a successful network logon for `CORP\\alice`, Logon Type 3, source `10.10.30.100:47226`, Logon ID `0x6e737d`; system time `2026-10-10T06:31:10.8416945Z`.
+- Security Event 4688 shows `wsmprovhost.exe` with Alice as target user and target Logon ID `0x6e737d`. A subsequent 4688 shows `whoami.exe` launched by `wsmprovhost.exe` under Alice's subject Logon ID `0x6e737d`.
+- Sysmon Event 3 and Wazuh rule 92110 show a connection from `10.10.30.100` to `10.10.20.100:5985`, source port `47226`.
+- Query `agent.name:WIN-01 AND rule.id:100107 AND data.win.eventdata.subjectLogonId:"0x6e737d"` returned no results.
+- The two visible 100107 alerts were at other times; an inspected record showed `subjectLogonId=0x43b36e` and CORP\\Administrator, not Alice. **Do not claim 100107 detected Alice's session.**
+- Native rule 92652 describes the 4624 as a possible pass-the-hash event, but its generic metadata does not prove pass-the-hash. Observed authentication package: NTLM / NTLM V2.
+- Some Alice Evil-WinRM attempts showed authorization errors, but the successful 4624 plus `wsmprovhost.exe` and `whoami.exe` evidence proves at least one network logon/process sequence succeeded. Distinguish attempts by timestamps.
+
+### Authorization / Safety Notes
+- Alice is a member of `CORP-IT-Admins`, a Global Security group with blank description and Alice as the only member observed.
+- WIN-01's local Remote Management Users group was empty; local Administrators included CORP\\Domain Admins, WIN-01\\Administrator and WIN-01\\david. It is not established whether CORP-IT-Admins is intended to grant workstation WinRM access.
+- No group changes have been made. Do not add Alice to local Administrators or change group membership without explaining impact and getting explicit approval.
+- The temporary lab-only pfSense and Windows Firewall exceptions for ARCH-01 → WIN-01 TCP/5985 remain in place intentionally. Do not claim cleanup or remove them without a deliberate plan.
+- Do not change VMware networks or expose vulnerable targets to the real LAN.
+
+### Next Validation Gate
+1. Reconcile the Alice timeline using Logon ID `0x6e737d`; compare 4624, any 4672, 4688, Sysmon 1 and Sysmon 3.
+2. Confirm whether a 4672 event exists for Alice. Inspect actual field semantics for rule 100107 and explain the non-match before any rule edit.
+3. Confirm whether Alice's successful session was the intended authorized test or a separate attempt if the available evidence cannot resolve this.
+4. Define benign negative/control test and measurable acceptance criteria.
+5. Only after the above, propose a minimal change; obtain explicit approval before material rule/permission/network/firewall changes.
+6. Do not assign DET-022 until scope and acceptance criteria are approved. Stage D network visibility remains later.
+
+### Handoff Prompt
+The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](NEW-CHAT-HANDOFF-PROMPT.md). At the start of a new chat, inspect the live repository, especially this file, `docs/DETECTION-ROADMAP.md`, `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`, and relevant architecture documents. Live GitHub state takes precedence if the prompt is stale.
