@@ -321,3 +321,36 @@ Current detection:
 - Status: NOT STARTED
 
 The target architecture does not require any infrastructure change before DET-019.
+
+ 
+## 11. Offensive + Defensive Security Research Expansion
+
+**Decision authority:** ADR-005 — ACCEPTED on 2026-11-02.  
+**Implementation status:** Scope and roadmap approved; future capabilities remain planned until individually implemented and validated.
+
+The target mission now explicitly integrates three tracks:
+
+1. Offensive security / Red Team — authorized adversary simulation, AD and enterprise attack-path analysis, web/application security, vulnerability assessment, and controlled exploitation.
+2. Exploit development / low-level security — C and systems programming, operating-system internals, assembly, debugging, reverse engineering, memory-safety analysis, and fuzzing.
+3. Defensive security / research — SOC, detection engineering, threat hunting, network and packet analysis, DFIR, purple-team validation, automation, and original security research.
+
+### Integration model
+
+The tracks share one evidence-driven research lifecycle:
+
+```
+Concept → Hypothesis → Authorized reproduction
+   → Evidence collection → Root-cause / impact analysis
+   → Detection and investigation → Improvement
+   → Replay → Technical report
+```
+
+### Infrastructure preservation
+
+The existing four-zone architecture and current assets remain authoritative. The expansion does not require immediate new VMs, network zones, sensors, firewall rules, routes, endpoint permissions, or detection rules. Potential additions must have a specific experiment/use case, isolation design, resource assessment, and separate approval.
+
+### Execution order
+
+The current Stage C AD/WinRM evidence gate remains the immediate task. After it is resolved or explicitly bounded, the project can progress through foundations, applied offensive/defensive practice, integrated adversary simulation, low-level research, and original security research. The detailed sequence is in `docs/RESEARCH-ROADMAP.md`.
+
+The 16-GB host and 32-GB-class target resource model remain unchanged. Use existing operational profiles and selective VM activation. Do not weaken the real-LAN isolation boundary.
