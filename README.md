@@ -248,6 +248,19 @@ Start here:
 
 ---
 
+
+## Offensive + Defensive Security Research Mission
+
+**Scope expansion accepted:** The Cyber Range is now the shared platform for three integrated tracks:
+
+- **Offensive security / Red Team:** authorized adversary simulation, Active Directory, web and host security, vulnerability assessment.
+- **Exploit development / low-level security:** C, operating-system internals, assembly, debugging, reverse engineering, and fuzzing.
+- **Defensive security / research:** SOC, detection engineering, threat hunting, network analysis, DFIR, purple-team validation, and security tooling.
+
+This is a project-scope decision, not a claim that every capability is deployed. The existing four-zone architecture, FW-01, current VMs, Wazuh/OpenSearch, and completed DET-001 → DET-021 history remain preserved.
+
+See [ADR-005](architecture/adr/ADR-005-offensive-defensive-research-expansion.md) and the [Offensive + Defensive Security Research Roadmap](docs/RESEARCH-ROADMAP.md). The immediate Stage C Alice WinRM / rule 100107 evidence investigation remains the active task. No infrastructure or detection-rule change is authorized by this scope expansion.
+
 ## Detection Documentation
 
 - [Detection Roadmap](docs/DETECTION-ROADMAP.md)
