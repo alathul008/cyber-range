@@ -22,3 +22,8 @@ This directory records significant Cyber Range architecture decisions.
 | ADR-004 | Detection and correlation treated as separate engineering problems | ACCEPTED / IMPLEMENTED |
 
 These records describe decisions already established by the project state. They do not claim approvals that were not recorded.
+
+| ADR-005 | Expand the project into an integrated Offensive + Defensive Security Research platform | ACCEPTED / SCOPE APPROVED; implementation remains incremental |
+
+ADR-005 approves the mission and roadmap expansion only. It does not authorize infrastructure, firewall, routing, VM, permission, or detection-rule changes.
+
