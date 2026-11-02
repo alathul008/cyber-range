@@ -303,3 +303,29 @@ The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](
 - Exact Logon ID filter `0x6e737d` returned zero hits; exact `subjectUserName:alice` filter also returned zero hits.
 - This does not yet prove absence of Alice's 4672; root cause remains **unconfirmed** until account-field representation and the related event timeline are checked.
 - Next single task: search WIN-01 events using both 4624 `targetUserName` and 4672/4688 `subjectUserName` account fields without restricting the rule ID.
+
+ 
+## Scope Expansion — 2026-11-02
+
+**Decision:** The project owner approved expanding the Cyber Range mission into an integrated Offensive + Defensive Security Research platform. See `architecture/adr/ADR-005-offensive-defensive-research-expansion.md`.
+
+### Approved capability tracks
+1. **Offensive security / Red Team:** authorized adversary simulation, AD and enterprise attack-path analysis, web/application security, vulnerability assessment, and controlled exploitation.
+2. **Exploit development / low-level security:** C, operating-system internals, assembly, debugging, reverse engineering, memory-safety analysis, and fuzzing.
+3. **Defensive security / research:** SOC, detection engineering, threat hunting, network/packet analysis, DFIR, purple-team validation, automation, and original research.
+
+### Preservation and change-control boundary
+- Existing four-zone VMware architecture, FW-01, ARCH-01, DC-01, WIN-01, WAZUH-01, OpenSearch, and completed DET-001 → DET-021 are preserved.
+- This approval changes project scope and roadmap only.
+- No VM, VMware network, pfSense rule, route, endpoint permission, account/group membership, Wazuh rule, or host configuration change is authorized by this decision.
+- New infrastructure or material configuration changes require a separate technical proposal, impact/resource assessment, rollback plan, and explicit approval.
+- Vulnerable targets and adversary activity must remain isolated from VMnet0 / the real LAN.
+- Planned capabilities must not be represented as deployed or validated.
+
+### Immediate execution priority — unchanged
+The active task remains the Stage C Alice WinRM evidence investigation and Wazuh rule 100107 mismatch for Logon ID `0x6e737d`. Determine whether the required 4672 correlation prerequisite exists, inspect actual event fields and active rule configuration, and define control/acceptance criteria. No rule or permission change before evidence-based explanation and separate approval.
+
+**No DET-022 is created or authorized by this scope expansion.** Its scope and acceptance criteria must be approved separately.
+
+### Roadmap
+The approved learning and capability roadmap is maintained in `docs/RESEARCH-ROADMAP.md`. The roadmap is a planning artifact; it does not certify proficiency or implementation.
