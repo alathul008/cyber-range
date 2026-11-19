@@ -259,12 +259,12 @@ The target should expand in dependency order:
 - operational profiles
 
 ### Stage C — Detection depth
-- DET-019 onward
-- correlation
-- threat hunting
-- detection tuning
-- replay and metrics
-- **Sequencing decision after DET-021:** deepen the existing AD/endpoint detection model with an AD/lateral-movement scenario before advancing to Stage D network visibility.
+- DET-001 → DET-021 completed and documented.
+- The active work is the evidence-led AD/WinRM investigation and validation gate using existing ARCH-01, WIN-01, DC-01, FW-01 and WAZUH-01.
+- The Alice Logon ID `0x6e737d` / Wazuh rule `100107` mismatch remains under investigation; root cause is unconfirmed.
+- Define the benign control/negative test, investigation criteria, and replay/measurement requirements before assigning a new DET number.
+- **DET-022 has not been created** and requires explicit scope and acceptance-criteria approval.
+- Stage D network visibility remains subsequent to this Stage C gate.
 
 ### Stage D — Network visibility
 - network telemetry
@@ -311,16 +311,18 @@ Current implemented core:
 - WIN-01
 - WAZUH-01
 
-Current completed detections:
+Completed detections:
 
-- DET-001 → DET-018
+- DET-001 → DET-021
 
-Current detection:
+Current Stage C task:
 
-- DET-019 — Privileged Logon → Process Creation Correlation
-- Status: NOT STARTED
+- Reconcile the Alice WinRM timeline for Logon ID `0x6e737d`.
+- Determine whether a matching Security Event 4672 exists and explain the Wazuh rule `100107` non-match from actual event fields and active configuration.
+- Define benign negative/control testing and measurable acceptance criteria.
+- Do not create DET-022 until its scope and acceptance criteria are approved.
 
-The target architecture does not require any infrastructure change before DET-019.
+The immediate evidence investigation uses the existing architecture. No infrastructure, firewall, route, permission, or detection-rule change is authorized or required merely to continue the documented evidence review.
 
  
 ## 11. Offensive + Defensive Security Research Expansion
