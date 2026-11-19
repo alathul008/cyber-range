@@ -329,3 +329,34 @@ The active task remains the Stage C Alice WinRM evidence investigation and Wazuh
 
 ### Roadmap
 The approved learning and capability roadmap is maintained in `docs/RESEARCH-ROADMAP.md`. The roadmap is a planning artifact; it does not certify proficiency or implementation.
+
+
+## Re-entry Review — 2026-11-19
+
+### GitHub repository audit
+- Repository reviewed: `alathul008/cyber-range`; default branch: `main`.
+- The latest commit on `main` at review time is `7704b65d5c0700511bd7e6632210c7e643c1a436` (`docs: record Alice 4672 search results`, 2026-10-26).
+- All individual detection README files for DET-001 through DET-021 are present in the repository tree.
+- Pull request [#1 — Expand Cyber Range into Offensive + Defensive Security Research](https://github.com/alathul008/cyber-range/pull/1) remains **OPEN / DRAFT / NOT MERGED**. Its base is `main`; its head is `scope/offensive-defensive-research-expansion`.
+- ADR-005 and `docs/RESEARCH-ROADMAP.md` are part of that draft PR and are not yet part of `main`.
+- During this review, the PR branch README and target architecture were reconciled with the authoritative DET-001 → DET-021 history and the current Stage C investigation. These are documentation-only changes.
+- Do not treat the PR as merged or its scope expansion as present on `main` until the PR is reviewed and merged.
+
+### Reconciled project status
+- DET-001 → DET-021 remain completed/documented.
+- DET-019 remains implemented and validated; alert-cardinality tuning is still open.
+- DET-020 remains validated with positive and negative tests; long-term replay/coverage measurement remains open.
+- DET-021 remains a documented telemetry boundary: Event 1 → Event 3 validated; the exact downloaded-file Event 11 relationship was not observed; no three-stage rule was created.
+- Current execution remains **Stage C — AD/WinRM evidence investigation**.
+- Alice's Logon ID `0x6e737d` / Wazuh rule `100107` mismatch remains unresolved. No DET-022 has been created.
+- Stage D network visibility remains later; Zeek/Suricata deployment is not part of this immediate task.
+
+### Next single technical action
+Search WIN-01 Wazuh events around Alice's successful 4624 at `2026-10-10T06:31:10.841Z`, using both:
+- Event 4624 account field: `targetUserName`
+- Event 4672 / 4688 account field: `subjectUserName`
+
+Do not restrict the search to rule ID `67028` or `100107`. Inspect the returned raw event fields, Logon IDs, timestamps, and index/time scope. The goal is to determine whether a corresponding 4672 exists and explain the rule 100107 non-match from evidence, not to change the rule.
+
+### Operational-state limitation
+This review inspected GitHub documentation only. It did **not** start or inspect VMware VMs, test Wazuh connectivity, verify current firewall exceptions, or re-read the active Wazuh runtime rule file. The recorded October lab state must not be assumed to describe the live lab on 2026-11-19. Verify only the relevant operational facts when resuming the hands-on task; make no configuration changes without a separate impact explanation and explicit approval.
