@@ -303,3 +303,60 @@ The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](
 - Exact Logon ID filter `0x6e737d` returned zero hits; exact `subjectUserName:alice` filter also returned zero hits.
 - This does not yet prove absence of Alice's 4672; root cause remains **unconfirmed** until account-field representation and the related event timeline are checked.
 - Next single task: search WIN-01 events using both 4624 `targetUserName` and 4672/4688 `subjectUserName` account fields without restricting the rule ID.
+
+ 
+## Scope Expansion — 2026-11-02
+
+**Decision:** The project owner approved expanding the Cyber Range mission into an integrated Offensive + Defensive Security Research platform. See `architecture/adr/ADR-005-offensive-defensive-research-expansion.md`.
+
+### Approved capability tracks
+1. **Offensive security / Red Team:** authorized adversary simulation, AD and enterprise attack-path analysis, web/application security, vulnerability assessment, and controlled exploitation.
+2. **Exploit development / low-level security:** C, operating-system internals, assembly, debugging, reverse engineering, memory-safety analysis, and fuzzing.
+3. **Defensive security / research:** SOC, detection engineering, threat hunting, network/packet analysis, DFIR, purple-team validation, automation, and original research.
+
+### Preservation and change-control boundary
+- Existing four-zone VMware architecture, FW-01, ARCH-01, DC-01, WIN-01, WAZUH-01, OpenSearch, and completed DET-001 → DET-021 are preserved.
+- This approval changes project scope and roadmap only.
+- No VM, VMware network, pfSense rule, route, endpoint permission, account/group membership, Wazuh rule, or host configuration change is authorized by this decision.
+- New infrastructure or material configuration changes require a separate technical proposal, impact/resource assessment, rollback plan, and explicit approval.
+- Vulnerable targets and adversary activity must remain isolated from VMnet0 / the real LAN.
+- Planned capabilities must not be represented as deployed or validated.
+
+### Immediate execution priority — unchanged
+The active task remains the Stage C Alice WinRM evidence investigation and Wazuh rule 100107 mismatch for Logon ID `0x6e737d`. Determine whether the required 4672 correlation prerequisite exists, inspect actual event fields and active rule configuration, and define control/acceptance criteria. No rule or permission change before evidence-based explanation and separate approval.
+
+**No DET-022 is created or authorized by this scope expansion.** Its scope and acceptance criteria must be approved separately.
+
+### Roadmap
+The approved learning and capability roadmap is maintained in `docs/RESEARCH-ROADMAP.md`. The roadmap is a planning artifact; it does not certify proficiency or implementation.
+
+
+## Re-entry Review — 2026-11-19
+
+### GitHub repository audit
+- Repository reviewed: `alathul008/cyber-range`; default branch: `main`.
+- The latest commit on `main` at review time is `7704b65d5c0700511bd7e6632210c7e643c1a436` (`docs: record Alice 4672 search results`, 2026-10-26).
+- All individual detection README files for DET-001 through DET-021 are present in the repository tree.
+- Pull request [#1 — Expand Cyber Range into Offensive + Defensive Security Research](https://github.com/alathul008/cyber-range/pull/1) remains **OPEN / DRAFT / NOT MERGED**. Its base is `main`; its head is `scope/offensive-defensive-research-expansion`.
+- ADR-005 and `docs/RESEARCH-ROADMAP.md` are part of that draft PR and are not yet part of `main`.
+- During this review, the PR branch README and target architecture were reconciled with the authoritative DET-001 → DET-021 history and the current Stage C investigation. These are documentation-only changes.
+- Do not treat the PR as merged or its scope expansion as present on `main` until the PR is reviewed and merged.
+
+### Reconciled project status
+- DET-001 → DET-021 remain completed/documented.
+- DET-019 remains implemented and validated; alert-cardinality tuning is still open.
+- DET-020 remains validated with positive and negative tests; long-term replay/coverage measurement remains open.
+- DET-021 remains a documented telemetry boundary: Event 1 → Event 3 validated; the exact downloaded-file Event 11 relationship was not observed; no three-stage rule was created.
+- Current execution remains **Stage C — AD/WinRM evidence investigation**.
+- Alice's Logon ID `0x6e737d` / Wazuh rule `100107` mismatch remains unresolved. No DET-022 has been created.
+- Stage D network visibility remains later; Zeek/Suricata deployment is not part of this immediate task.
+
+### Next single technical action
+Search WIN-01 Wazuh events around Alice's successful 4624 at `2026-10-10T06:31:10.841Z`, using both:
+- Event 4624 account field: `targetUserName`
+- Event 4672 / 4688 account field: `subjectUserName`
+
+Do not restrict the search to rule ID `67028` or `100107`. Inspect the returned raw event fields, Logon IDs, timestamps, and index/time scope. The goal is to determine whether a corresponding 4672 exists and explain the rule 100107 non-match from evidence, not to change the rule.
+
+### Operational-state limitation
+This review inspected GitHub documentation only. It did **not** start or inspect VMware VMs, test Wazuh connectivity, verify current firewall exceptions, or re-read the active Wazuh runtime rule file. The recorded October lab state must not be assumed to describe the live lab on 2026-11-19. Verify only the relevant operational facts when resuming the hands-on task; make no configuration changes without a separate impact explanation and explicit approval.

@@ -1,6 +1,6 @@
 # Cyber Range
 
-**Enterprise-Style Cybersecurity Detection, Investigation & Purple-Team Laboratory**
+**Integrated Offensive + Defensive Security Research Cyber Range**
 
 A practical, isolated cybersecurity range built with VMware Workstation Pro on Windows 11. The project is designed around measurable security workflows rather than a collection of disconnected tools.
 
@@ -96,7 +96,7 @@ The current security-monitoring platform is Wazuh:
 - Wazuh agents on DC-01 and WIN-01
 - Sysmon on DC-01 and WIN-01
 
-Validated Windows telemetry includes Security events such as 4624, 4625, 4672, 4698, 4720, 4728, 4732, 4740, 7045 and Sysmon Event IDs 1 and 11.
+Validated Windows telemetry includes Security events such as 4624, 4625, 4672, 4688, 4698, 4720, 4728, 4732, 4740, 7045 and Sysmon Event IDs 1, 3 and 11.
 
 ---
 
@@ -108,7 +108,7 @@ Detection and correlation are deliberately treated as separate engineering probl
 
 ### Completed
 
-**DET-001 → DET-018 — COMPLETED**
+**DET-001 → DET-021 — COMPLETED**
 
 The detection sequence covers areas including:
 
@@ -129,29 +129,17 @@ The detection sequence covers areas including:
 
 Where evidence supports it, detections are mapped to MITRE ATT&CK. Vendor/native ATT&CK metadata is kept distinct from what the observed evidence actually proves.
 
-### Current
+### Completed detection outcomes
 
-**DET-019 — Privileged Logon → Process Creation Correlation**
+- **DET-019:** Privileged logon → process-creation correlation validated using Wazuh rule `100107` and the 4672 → 4688 Logon-ID relationship. Alert-cardinality tuning remains open.
+- **DET-020:** PowerShell process → network connection correlation validated using ProcessGuid and Wazuh rule `100108`; positive and negative validation completed.
+- **DET-021:** PowerShell download telemetry boundary documented. Event 1 → Event 3 was validated; Event 11 for the exact downloaded file and ProcessGuid was not observed, so no three-stage rule was created.
 
-The intended investigation chain is:
+### Active investigation — Stage C
 
-```
-4624 Successful Logon
-        ↓
-4672 Special Privileges
-        ↓
-Sysmon Event ID 1
-        ↓
-Process Creation
-        ↓
-Wazuh
-        ↓
-Logon-ID/session correlation
-        ↓
-Investigation
-```
+The current task is the Alice WinRM / rule `100107` mismatch for Logon ID `0x6e737d`. The evidence confirms a successful 4624 and related process/network activity, but no matching `100107` alert was found. The reason remains unconfirmed pending the documented Event 4672 and field-representation checks. See [the WinRM investigation record](docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md).
 
-DET-019 has **not** been executed. Its ATT&CK mapping will be determined from observed behavior rather than pre-claimed.
+**No DET-022 has been created.** Its scope and acceptance criteria require separate approval.
 
 ---
 
@@ -217,14 +205,18 @@ cyber-range/
 │       ├── ADR-001-isolated-four-zone-architecture.md
 │       ├── ADR-002-32GB-target-profile-operation.md
 │       ├── ADR-003-wazuh-central-monitoring.md
-│       └── ADR-004-detection-vs-correlation.md
+│       ├── ADR-004-detection-vs-correlation.md
+│       └── ADR-005-offensive-defensive-research-expansion.md
 ├── detections/
 │   ├── DET-001-*/
 │   ├── DET-002-*/
 │   └── ...
 └── docs/
     ├── DETECTION-ROADMAP.md
-    └── PROJECT-STATE.md
+    ├── PROJECT-STATE.md
+    ├── AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md
+    ├── NEW-CHAT-HANDOFF-PROMPT.md
+    └── RESEARCH-ROADMAP.md
 ```
 
 The architecture documents contain the system-level design. Detection directories contain the evidence and engineering artifacts for individual scenarios. `PROJECT-STATE.md` is the cross-chat project handoff.
@@ -247,6 +239,19 @@ Start here:
 - [Architecture Decision Records](architecture/adr/README.md)
 
 ---
+
+
+## Offensive + Defensive Security Research Mission
+
+**Scope expansion accepted:** The Cyber Range is now the shared platform for three integrated tracks:
+
+- **Offensive security / Red Team:** authorized adversary simulation, Active Directory, web and host security, vulnerability assessment.
+- **Exploit development / low-level security:** C, operating-system internals, assembly, debugging, reverse engineering, and fuzzing.
+- **Defensive security / research:** SOC, detection engineering, threat hunting, network analysis, DFIR, purple-team validation, and security tooling.
+
+This is a project-scope decision, not a claim that every capability is deployed. The existing four-zone architecture, FW-01, current VMs, Wazuh/OpenSearch, and completed DET-001 → DET-021 history remain preserved.
+
+See [ADR-005](architecture/adr/ADR-005-offensive-defensive-research-expansion.md) and the [Offensive + Defensive Security Research Roadmap](docs/RESEARCH-ROADMAP.md). The immediate Stage C Alice WinRM / rule 100107 evidence investigation remains the active task. No infrastructure or detection-rule change is authorized by this scope expansion.
 
 ## Detection Documentation
 
@@ -322,11 +327,11 @@ This repository follows several evidence standards:
 | Windows endpoint telemetry | Implemented / validated |
 | Wazuh | Implemented / validated |
 | Sysmon | Implemented / validated |
-| DET-001 → DET-018 | Completed |
-| DET-019 | Current / not started |
+| DET-001 → DET-021 | Completed / documented |
+| Stage C Alice WinRM investigation | In progress; evidence root cause unconfirmed |
+| DET-022 | Not created; approval gate required |
 | Target architecture | Documented |
-| Architecture ADR layer | Established |
-| DET-019 pre-attack snapshot | Not created |
+| Architecture ADR layer | Established; ADR-005 scope approved |
 
 ---
 
