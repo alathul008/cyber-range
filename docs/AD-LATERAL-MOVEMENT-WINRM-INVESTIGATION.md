@@ -152,3 +152,52 @@ Two narrower searches returned no results:
 - `agent.name:WIN-01 AND rule.id:67028 AND data.win.eventdata.subjectUserName:alice`
 
 These results establish only that the selected Wazuh view returned no hits for those exact filters. They do not yet prove Alice had no Event 4672 because username/field representation and time/index scope have not been independently ruled out. Root cause remains unconfirmed. Next, search WIN-01 events by both 4624 target account and 4672/4688 subject account fields without restricting the rule ID.
+
+## 2026-11-27 — Fresh WinRM validation (current checkpoint)
+
+This checkpoint supersedes the October investigation as the active work item. Historical observations above are retained as documentation, not as currently searchable telemetry. Stage C remains open; no DET-022 is assigned.
+
+### Baseline and cleanup
+- KALI-01 replaced ARCH-01 on the established ATTACK segment (VMnet4), using 10.10.30.100. Evil-WinRM v4.1 installed and verified.
+- FW-01, DC-01, WAZUH-01 and WIN-01 were started; Kali was subsequently started for the test.
+- With user-requested cleanup, September/October rotated local archive and alert files and 14 explicitly identified September/October alert indices were deleted. November files/index were preserved. Local archives decreased from about 4.9 GB to 303 MB; alerts from 260 MB to 3.7 MB. Physical disk reclamation was not verified (df still showed about 23 GB available). Pre-cleanup snapshot was recommended but not confirmed.
+- Manager, indexer and Filebeat reported active. The remaining alert index `wazuh-alerts-4.x-2026.11.27` was green with 505 documents at verification. No archive indices were returned by the index listing. Windows Security logs were not cleared.
+- WIN-01 WinRM was stopped; an attempted start under Alice failed. An elevated start succeeded, TCP 5985 listened, and Kali's TCP connectivity test succeeded. No firewall, VMware, membership, endpoint ACL or Wazuh rule changes were made during this checkpoint. Service was started, not reconfigured.
+
+### Controlled activity
+- Test start: 2026-11-27 06:01:53 UTC (11:31:53 IST).
+- Authorized password-authenticated sessions from KALI-01 to WIN-01 using CORP\\Administrator and CORP\\alice succeeded; `whoami` and `hostname` returned the respective identities and WIN-01. Session closure was not independently verified.
+- Wazuh search for rules 92110, 100107 and 67028 returned two 92110 alerts (11:34:30.516/.537 IST), one 67028 alert (11:34:29.059 IST), and zero 100107 alerts. These are search results, not total coverage guarantees. The two network alerts were not individually attributed to accounts.
+- Wazuh 4624 search for network logons from 10.10.30.100 showed Administrator (0x14517f7, elevated token Yes) and Alice (0x14ed565 and 0x154d806, elevated token No). Native rule 92652 labels possible pass-the-hash; password authentication was used, so this label is not proof of pass-the-hash.
+
+### Session correlation evidence
+| Account / session | Wazuh observations |
+|---|---|
+| Administrator 0x14517f7 | 4624 and 4672 (67028), no matching 4688 found in searched results |
+| Administrator 0x140db52 | Four 4688 (67027) events, no matching 4624/4672 found in searched results |
+| Alice 0x14ed565 | 4624; four 4688 events (whoami.exe, HOSTNAME.EXE, two conhost.exe); no matching 4672 found |
+| Alice 0x154d806 | 4624; no matching 4672/4688 found in supplied search |
+
+Administrator process events on 0x140db52: Wazuh timestamps 11:34:29.094, .109, .155, .171 IST; whoami.exe and HOSTNAME.EXE were children of wsmprovhost.exe; the two conhost.exe events were children of the respective commands. Alice process events on 0x14ed565: 11:35:35.032, .047, .128, .140 IST.
+
+### Raw Windows Security evidence — decisive correction
+
+An elevated read-only Get-WinEvent query for both Administrator IDs returned:
+
+| Windows time (IST) | Event | Record ID | Logon ID |
+|---|---|---|---|
+| 11:32:31 | 4672 | 56253 | 0x140db52 |
+| 11:32:31 | 4624 | 56254 | 0x140db52 |
+| 11:32:50 | 4672 | 56274 | 0x14517f7 |
+| 11:32:50 | 4624 | 56275 | 0x14517f7 |
+
+Both 4624 records were Administrator, Logon Type 3, ElevatedToken %%1842, LinkedLogonId 0x0. Thus Windows DID generate a matching 4672 for the process session 0x140db52. The previous inference that this session lacked special privileges is superseded. The reason its 4624/4672 were not found in indexed alerts remains unresolved. Windows event time and Wazuh alert time must not be mixed when evaluating the documented 60-second correlation window. Raw 4688 timestamps and deployed rule 100107 have not yet been checked. Alice's absence of 4672 in Wazuh does not prove absence in raw Windows logs.
+
+### Resume gate — exact next action
+In Wazuh Threat Hunting, select an absolute range covering November 27, 2026 11:30–11:45 IST (06:00–06:15 UTC), and run:
+
+```text
+agent.name:"WIN-01" AND data.win.system.eventRecordID:("56253" OR "56254" OR "56274" OR "56275")
+```
+
+Add eventRecordID, eventID, rule.id, subjectLogonId, targetLogonId and original event time (data.win.system.systemTime) columns as needed. Compare exact record IDs before checking manager archives, raw 4688 timestamps or the active rule. Do not replay October logs or repeat the completed queries. No rule/permission changes until the cause is established and approval obtained. Detection improvement, replay, response validation, cross-rule correlation, alert cardinality and scenario metrics remain open. User paused after the raw Windows evidence.
