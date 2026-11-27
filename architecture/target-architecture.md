@@ -42,7 +42,7 @@ The current core remains authoritative:
     |             |      |      |
    MGMT       ENTERPRISE ATTACK SECURITY
                   |       |       |
-              DC-01     ARCH-01 WAZUH-01
+              DC-01     KALI-01 WAZUH-01
               WIN-01
 
 The four-zone model remains the security foundation.
@@ -101,7 +101,7 @@ Potential technologies include Zeek and Suricata, but neither is currently deplo
 ### Layer 5 — Adversary Simulation
 
 Current:
-- ARCH-01
+- KALI-01
 
 Target capability:
 - multiple attack paths
@@ -247,7 +247,7 @@ The target should expand in dependency order:
 
 ### Stage A — Current core
 - FW-01
-- ARCH-01
+- KALI-01
 - DC-01
 - WIN-01
 - WAZUH-01
@@ -306,7 +306,7 @@ The exact order after Stage C may change based on measured prerequisites and pro
 Current implemented core:
 
 - FW-01
-- ARCH-01
+- KALI-01
 - DC-01
 - WIN-01
 - WAZUH-01
@@ -321,3 +321,6 @@ Current detection:
 - Status: NOT STARTED
 
 The target architecture does not require any infrastructure change before DET-019.
+
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
