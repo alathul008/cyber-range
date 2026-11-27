@@ -73,7 +73,7 @@ Upstream connectivity uses **VMnet8 NAT**. VMnet0 is the real-LAN bridged networ
 | Asset | Role | Address |
 |---|---|---|
 | FW-01 | pfSense firewall/router | Zone gateways |
-| ARCH-01 | Arch Linux attack/operator box | 10.10.30.100 |
+| KALI-01 | Kali Linux attack/operator box | 10.10.30.100 |
 | DC-01 | Windows Server 2025 AD/DNS/GC | 10.10.20.10 |
 | WIN-01 | Domain-joined Windows endpoint | 10.10.20.100 |
 | WAZUH-01 | Ubuntu/Wazuh security server | 10.10.40.10 |
@@ -340,3 +340,6 @@ The emphasis is on:
 
 rather than the number of tools installed.
 
+
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
