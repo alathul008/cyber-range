@@ -154,13 +154,13 @@ Canonical recovery of the Cyber Range detection-engineering sequence.
 
 DET-001 through DET-021 are complete. The roadmap does not explicitly name the next scenario after DET-021. The target architecture places the project in **Stage C — Detection Depth**, with **Stage D — Network Visibility** subsequent to Stage C.
 
-Therefore, the sequencing decision is to remain in Stage C and next evaluate/build an **AD/lateral-movement detection and investigation scenario** using the existing DC-01, WIN-01, ARCH-01, and Wazuh foundation. This is intentionally not assigned a DET number yet.
+Therefore, the sequencing decision is to remain in Stage C and next evaluate/build an **AD/lateral-movement detection and investigation scenario** using the existing DC-01, WIN-01, KALI-01, and Wazuh foundation. This is intentionally not assigned a DET number yet.
 
 Rationale: AD/lateral movement is directly aligned with the existing enterprise identity/endpoint foundation and Stage C detection-depth objective, while network visibility (Zeek/Suricata) is explicitly Stage D. No VMware, pfSense, Zeek, or Suricata change is authorized by this decision.
 
 ## Current State
 
-- DET-001 → DET-020: COMPLETED
+- DET-001 → DET-021: COMPLETED
 - DET-019: COMPLETED / DETECTION IMPLEMENTED / TUNING OPEN
 - DET-020: COMPLETED / DETECTION IMPLEMENTED / POSITIVE + NEGATIVE VALIDATED
 - DET-021: COMPLETED / TELEMETRY INVESTIGATION / BOUNDARY DOCUMENTED
@@ -172,3 +172,6 @@ Rationale: AD/lateral movement is directly aligned with the existing enterprise 
 ## Recovery Rule
 
 This roadmap records only details supported by available project evidence. Missing historical details are not replaced with generic scenarios.
+
+## November 27 checkpoint
+Stage C remains active. Fresh WinRM Administrator/Alice evidence is recorded in [WinRM investigation](AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md). Rule 100107 non-match remains unresolved; next check exact Windows record IDs 56253, 56254, 56274, 56275 in Wazuh. No DET-022 assigned; no Stage D changes.
