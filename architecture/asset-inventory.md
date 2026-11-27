@@ -35,7 +35,7 @@ The architecture remains designed for a 32-GB-class host. The current 16-GB cons
 | Asset | Role | Zone | Address | State |
 |---|---|---|---|---|
 | FW-01 | pfSense firewall/router and zone boundary | Multi-zone | .1 per lab segment | IMPLEMENTED |
-| ARCH-01 | Primary attack/operator environment | ATTACK | 10.10.30.100 | IMPLEMENTED |
+| KALI-01 | Primary attack/operator environment | ATTACK | 10.10.30.100 | IMPLEMENTED |
 | DC-01 | Active Directory domain controller, DNS, Global Catalog | ENTERPRISE | 10.10.20.10 | IMPLEMENTED / VALIDATED |
 | WIN-01 | Domain-joined Windows enterprise endpoint | ENTERPRISE | 10.10.20.100 | IMPLEMENTED / VALIDATED |
 | WAZUH-01 | Security monitoring / Wazuh server | SECURITY/SOC | 10.10.40.10 | IMPLEMENTED / VALIDATED |
@@ -64,17 +64,17 @@ The architecture remains designed for a 32-GB-class host. The current 16-GB cons
 
 FW-01 provides the established segmentation boundary between the lab zones. The WAN path uses VMware NAT through VMnet8.
 
-## 5. ARCH-01 — Attack / Operator
+## 5. KALI-01 — Attack / Operator
 
 **Role:** Primary authorized attack and operator environment.
 
-- OS: Arch Linux
+- OS: Kali Linux
 - Zone: ATTACK
 - IP: 10.10.30.100
 - Primary function: controlled adversary simulation, security testing, and operator activity
 - State: IMPLEMENTED
 
-ARCH-01 is intentionally separated from the ENTERPRISE and SECURITY/SOC zones by FW-01 policy.
+KALI-01 is intentionally separated from the ENTERPRISE and SECURITY/SOC zones by FW-01 policy.
 
 ## 6. DC-01 — Domain Controller
 
@@ -242,7 +242,7 @@ Established Wazuh firewall exceptions permit DC-01 and WIN-01 to reach WAZUH-01 
 - Windows 11 host
 - VMware Workstation Pro
 - FW-01
-- ARCH-01
+- KALI-01
 - DC-01
 - WIN-01
 - WAZUH-01
@@ -281,3 +281,6 @@ This inventory is evidence-bound. It does not claim capabilities merely because 
 Where an asset is marked **IMPLEMENTED / VALIDATED**, implementation and validation are intentionally kept as separate states.
 
 No infrastructure change is implied by this document.
+
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
