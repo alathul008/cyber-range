@@ -32,7 +32,7 @@ It does not modify or prescribe infrastructure changes.
        |        |           |           |           |
        |        |       +---+---+       |           |
        |        |       |       |       |           |
-       |        |    DC-01   WIN-01  ARCH-01     WAZUH-01
+       |        |    DC-01   WIN-01  KALI-01     WAZUH-01
        |        |    .20.10   .20.100   .30.100    .40.10
        |        |
        |    Host adapter
@@ -52,7 +52,7 @@ VMnet1 is retained as a legacy host-only network and is not part of the core fou
 |---|---|---|---|---|
 | MGMT | VMnet2 | 10.10.10.0/24 | Management | Host-side management connectivity |
 | ENTERPRISE | VMnet3 | 10.10.20.0/24 | Enterprise identity/endpoints | DC-01, WIN-01 |
-| ATTACK | VMnet4 | 10.10.30.0/24 | Attack/operator activity | ARCH-01 |
+| ATTACK | VMnet4 | 10.10.30.0/24 | Attack/operator activity | KALI-01 |
 | SECURITY/SOC | VMnet5 | 10.10.40.0/24 | Monitoring/security services | WAZUH-01 |
 
 The zones are logically separated by FW-01.
@@ -113,7 +113,7 @@ The Windows host-side virtual adapters use .254 on the lab host-only networks.
     ATTACK
     10.10.30.0/24
            |
-        ARCH-01
+        KALI-01
       10.10.30.100
            |
     Controlled activity
@@ -122,7 +122,7 @@ The Windows host-side virtual adapters use .254 on the lab host-only networks.
            |
        Lab targets
 
-ARCH-01 is the primary operator/attack environment.
+KALI-01 is the primary operator/attack environment.
 
 The attack zone is intentionally separated from the enterprise and security zones. Controlled activity must remain inside the authorized lab environment.
 
@@ -204,7 +204,7 @@ The core MGMT, ENTERPRISE, ATTACK, and SECURITY/SOC networks remain separate fro
 - Network: 10.10.30.0/24
 - pfSense gateway: 10.10.30.1
 - Host adapter: 10.10.30.254
-- ARCH-01: 10.10.30.100
+- KALI-01: 10.10.30.100
 - DHCP convention: .100–.199 where applicable
 
 ### VMnet5 — SECURITY/SOC
@@ -219,7 +219,7 @@ The core MGMT, ENTERPRISE, ATTACK, and SECURITY/SOC networks remain separate fro
 
 ### ATTACK → ENTERPRISE
 
-Controlled attack activity originates from ARCH-01 and targets authorized enterprise systems.
+Controlled attack activity originates from KALI-01 and targets authorized enterprise systems.
 
 FW-01 enforces the established ATTACK isolation policy.
 
@@ -286,7 +286,7 @@ Sysmon Event ID 1 process creation has been validated through this path.
 
 ## 12. Detection / Investigation Relationship
 
-    ARCH-01 / controlled activity
+    KALI-01 / controlled activity
                 |
                 v
          Enterprise target
@@ -319,7 +319,7 @@ This relationship is the core reason the ATTACK, ENTERPRISE, and SECURITY/SOC zo
 | Asset | Zone | IP | Primary Role | State |
 |---|---|---:|---|---|
 | FW-01 | Multi-zone | .1 per lab zone | Firewall/router | IMPLEMENTED |
-| ARCH-01 | ATTACK | 10.10.30.100 | Attack/operator | IMPLEMENTED |
+| KALI-01 | ATTACK | 10.10.30.100 | Attack/operator | IMPLEMENTED |
 | DC-01 | ENTERPRISE | 10.10.20.10 | AD/DNS/GC | IMPLEMENTED / VALIDATED |
 | WIN-01 | ENTERPRISE | 10.10.20.100 | Windows endpoint | IMPLEMENTED / VALIDATED |
 | WAZUH-01 | SECURITY/SOC | 10.10.40.10 | SIEM/security monitoring | IMPLEMENTED / VALIDATED |
@@ -354,7 +354,7 @@ This document does not authorize changes to the host network, VMware networking,
     |               |           |
   ATTACK         ENTERPRISE   SECURITY
     |               |           |
- ARCH-01        DC-01/WIN-01  WAZUH-01
+ KALI-01        DC-01/WIN-01  WAZUH-01
 
 ### Target evolution
 
@@ -388,3 +388,6 @@ These are separate future documentation tasks and are not implied to already exi
 5. Any future VMware or pfSense change requires explicit validation and rollback planning.
 6. The real LAN/VMnet0 must remain distinct from the isolated lab zones.
 7. The topology must remain consistent with architecture/ARCHITECTURE.md and docs/PROJECT-STATE.md.
+
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
