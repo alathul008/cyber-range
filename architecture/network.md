@@ -44,7 +44,7 @@ Current established addresses:
 | WIN-01 | VMnet3 | 10.10.20.100 | Established endpoint address |
 | Host adapter | VMnet3 | 10.10.20.254 | Host |
 | FW-01 ATTACK | VMnet4 | 10.10.30.1 | Static |
-| ARCH-01 | VMnet4 | 10.10.30.100 | Established endpoint address |
+| KALI-01 | VMnet4 | 10.10.30.100 | Established endpoint address |
 | Host adapter | VMnet4 | 10.10.30.254 | Host |
 | FW-01 SECURITY | VMnet5 | 10.10.40.1 | Static |
 | WAZUH-01 | VMnet5 | 10.10.40.10 | Static |
@@ -96,7 +96,7 @@ The established VMnet8 NAT gateway is 192.168.150.2. FW-01 WAN uses the VMnet8 N
 - Host adapter: 10.10.30.254.
 - FW-01 gateway: 10.10.30.1.
 - pfSense DHCP pool: .100–.199.
-- ARCH-01: 10.10.30.100.
+- KALI-01: 10.10.30.100.
 
 ### VMnet5 — SECURITY/SOC
 
@@ -228,7 +228,7 @@ This prevents the Windows host adapter from competing with FW-01 for the lab gat
 
 The logical routing path is:
 
-    ARCH-01
+    KALI-01
        |
     VMnet4
        |
@@ -316,3 +316,6 @@ Future detailed documents will cover assets, security boundaries, telemetry arch
 4. .1 belongs to pfSense gateways on the lab segments; .254 is reserved for Windows host-side adapters.
 5. Enterprise-to-security exceptions must remain explicit for Wazuh traffic.
 6. Implemented segmentation must not be described as exhaustive security validation.
+
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
