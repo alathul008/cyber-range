@@ -4,7 +4,7 @@
 **Phase 2 — AD + Endpoint Telemetry + Detection Engineering**
 
 ## Current Objective
-Stage C sequencing is now documented after DET-021. The next capability is an AD/lateral-movement detection and investigation scenario using the existing architecture; no DET-022 has been created.
+Stage C — Detection Depth: investigate the fresh November 27 WinRM telemetry and rule 100107 correlation gap. No DET-022 has been assigned. User paused after raw Windows evidence; resume at the exact next query below.
 
 ## Current DET
 **DET-021 — PowerShell Download Chain Telemetry Boundary**
@@ -73,7 +73,7 @@ The previously suspected DET-004 through DET-008 gap is therefore already resolv
 - RAM: 16 GB currently
 - GPU: NVIDIA GeForce RTX 3050 Laptop GPU
 - VMware Workstation Pro
-- ARCH-01: primary attack/operator VM
+- KALI-01: primary attack/operator VM (Kali Linux, replaced retired ARCH-01 on 2026-11-21; Evil-WinRM v4.1 verified 2026-11-27)
 - WIN-01: enterprise Windows endpoint
 - DC-01: Windows Server 2025 domain controller
 - WAZUH-01: Ubuntu/Wazuh security server
@@ -90,7 +90,7 @@ Target architecture remains 32-GB-class; current memory constraints are handled 
 - VMnet5: SECURITY/SOC 10.10.40.0/24.
 - pfSense FW-01 uses .1 on lab segments.
 - Host virtual adapters use .254 on lab host-only segments.
-- ARCH-01: 10.10.30.100.
+- KALI-01: 10.10.30.100 (VMnet4; previous ARCH-01 address).
 - DC-01: 10.10.20.10.
 - WIN-01: 10.10.20.100.
 - WAZUH-01: 10.10.40.10.
@@ -182,14 +182,14 @@ Recent architecture documentation commits:
 - `5a680871e3925bcb11ca73b3405f43499fb86922` — `architecture: add ADR-004`
 
 ## Current Blockers
-None blocking the next planning gate.
+Rule 100107 root cause remains unresolved. Raw Windows 4624/4672 records for the Administrator process session exist but were not found in the supplied Wazuh alert searches. Snapshot status and physical disk reclamation are unverified.
 
 Known engineering gaps remain non-blocking: DET-019 alert-cardinality tuning and DET-020 long-term replay/coverage measurement.
 
 ## Next Task
-Review the documented controlled WinRM evidence in `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`. Continue the Stage C AD/lateral-movement scenario by validating the event timeline, defining a benign negative/control test, and specifying investigation and replay criteria. Do not assign a DET number until the scenario scope and validation plan are explicitly approved.
+Resume the November 27 checkpoint in `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`: query Wazuh for exact Windows record IDs 56253, 56254, 56274, 56275 on WIN-01. Do not revisit the purged October indices or replay the test yet. No DET number until scope and validation plan are explicitly approved.
 
-## AD/Lateral-Movement WinRM Evidence — 2026-10-09
+## Historical AD/Lateral-Movement WinRM Evidence — 2026-10-09
 - Evidence record: `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`.
 - Controlled Evil-WinRM session from ARCH-01 (`10.10.30.100`) to WIN-01 (`10.10.20.100`) over TCP 5985 using `CORP\Administrator`.
 - Wazuh native rule 92110 fired on WIN-01 Sysmon Event ID 3 for source `10.10.30.100:34504` to destination `10.10.20.100:5985`; event time `2026-10-09 07:00:15.404Z`.
@@ -250,7 +250,7 @@ If exact historical evidence cannot be recovered, write:
 Never invent commands, timestamps, screenshots, metrics, findings, telemetry, or ATT&CK coverage.
 
 
-## Current Handoff Update — 2026-10-26
+## Historical Handoff Update — 2026-10-26 (superseded)
 
 ### Current Phase and Task
 - Phase: **Stage C — Detection Depth**.
@@ -286,7 +286,7 @@ Never invent commands, timestamps, screenshots, metrics, findings, telemetry, or
 The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](NEW-CHAT-HANDOFF-PROMPT.md). At the start of a new chat, inspect the live repository, especially this file, `docs/DETECTION-ROADMAP.md`, `docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md`, and relevant architecture documents. Live GitHub state takes precedence if the prompt is stale.
 
 
-## Current Investigation Checkpoint — 2026-10-26
+## Historical Investigation Checkpoint — 2026-10-26 (superseded)
 
 - Current task remains the Alice WinRM Logon ID `0x6e737d` / Wazuh rule `100107` mismatch; no DET-022 is assigned.
 - Existing evidence confirms Security 4624 successful network logon, Security 4688 process creation involving `wsmprovhost.exe` and `whoami.exe`, Sysmon Event 1 process telemetry, and Sysmon Event 3 WinRM network activity detected by native rule `92110`.
@@ -303,3 +303,20 @@ The complete new-chat prompt is maintained at [docs/NEW-CHAT-HANDOFF-PROMPT.md](
 - Exact Logon ID filter `0x6e737d` returned zero hits; exact `subjectUserName:alice` filter also returned zero hits.
 - This does not yet prove absence of Alice's 4672; root cause remains **unconfirmed** until account-field representation and the related event timeline are checked.
 - Next single task: search WIN-01 events using both 4624 `targetUserName` and 4672/4688 `subjectUserName` account fields without restricting the rule ID.
+
+## Latest checkpoint — 2026-11-27 (AUTHORITATIVE RESUME POINT)
+
+- Phase: Stage C — Detection Depth. DET-001 through DET-021 remain completed; no DET-022 assigned. Stage D not started.
+- User paused after fresh WinRM evidence collection and raw Windows Security validation.
+- Approved workstation migration: KALI-01 replaces ARCH-01, preserving ATTACK/VMnet4 and 10.10.30.100. Historical ARCH-01 evidence remains unchanged.
+- Cleanup at user's request: September/October local event files and 14 historical alert indices deleted. November telemetry retained, current index green (505 documents at verification); manager/indexer/Filebeat active. Windows logs not cleared. Snapshot and physical disk reclamation unverified.
+- WinRM was stopped on WIN-01; elevated Start-Service WinRM restored listening TCP 5985, and Kali connectivity passed. Evil-WinRM v4.1 installed. Both Administrator and Alice password-authenticated sessions returned whoami and hostname successfully. No firewall, group, endpoint ACL, VMware or Wazuh rule changes today.
+- Wazuh returned two native 92110 alerts, one 67028, zero 100107 in the supplied search. Administrator 4624/4672 for 0x14517f7; four 4688 events under 0x140db52. Alice 4624 IDs 0x14ed565 and 0x154d806 (not elevated), four 4688 under 0x14ed565, no matching 4672 observed in supplied search.
+- Raw Windows confirms BOTH Administrator sessions had 4624/4672: 0x140db52 at 11:32:31 IST (records 56254/56253); 0x14517f7 at 11:32:50 IST (records 56275/56274). Both elevated, type 3, linked ID 0x0. Therefore the process session did have special privileges; apparent alert visibility/processing gap is unresolved. Do not claim ingestion failure, timing cause, or root cause yet.
+- Full evidence and exact query: [WinRM investigation](AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md), November 27 checkpoint (commit 3d6f47b1876ff7e8f18105e73b0d8772cd6e497f).
+- Next single action: Wazuh Threat Hunting, absolute November 27 11:30–11:45 IST (06:00–06:15 UTC):
+```text
+agent.name:"WIN-01" AND data.win.system.eventRecordID:("56253" OR "56254" OR "56274" OR "56275")
+```
+- Then evaluate original Windows timestamps vs Wazuh alert timestamps, manager archives and active rule as needed, one task at a time. No new rules or changes before approval. Preserve October written evidence but do not request old screenshots or search deleted indices.
+- Open: exact record visibility, raw 4688 event times, runtime rule 100107, control acceptance criteria, correlation improvement/replay, response, metrics, and Alice's authorization intent. WinRM exceptions remain in place; closure of remote shells and later service state not independently verified.
