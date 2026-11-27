@@ -26,7 +26,7 @@ Detection engineering, threat hunting, evidence, purple teaming, ATT&CK, and mea
 - Approximately 262 GB free storage at last inventory
 - VMware Workstation Pro
 - Architecture should target a 32-GB-class range. Do not shrink the target design just because current RAM is 16 GB; use operational profiles and power off VMs that are not in use.
-- Existing Arch Linux VM is the operator/attack box.
+- KALI-01 is the operator/attack box; ARCH-01 was retired following the approved November 21 migration.
 - Existing Windows 10 VM is an enterprise endpoint.
 - Do not delete/reinstall existing VMs unless absolutely necessary.
 
@@ -51,7 +51,7 @@ Host virtual adapters use .254 on lab host-only segments. FW-01 is pfSense:
 - Never attach intentionally vulnerable targets to VMnet0/real LAN. Warn before any VMware, firewall, routing, host networking, VM, partition, or boot changes. Explain rollback first.
 
 ## Lab machines and identity
-- ARCH-01: Arch Linux operator/attack VM, 10.10.30.100.
+- KALI-01: Kali Linux operator/attack VM, 10.10.30.100 (VMnet4); Evil-WinRM v4.1 verified.
 - WIN-01: Windows 10 enterprise endpoint, 10.10.20.100, domain-joined.
 - DC-01: Windows Server 2025 domain controller, 10.10.20.10.
 - WAZUH-01: Ubuntu Server 24.04.5 with Wazuh 4.14.7 all-in-one, 10.10.40.10.
@@ -97,7 +97,7 @@ On Oct 10, the Alice test produced important evidence:
 - Some Evil-WinRM attempts showed WinRMAuthorizationError, but the successful 4624 + wsmprovhost + whoami evidence above means do not simplistically conclude all Alice attempts failed. Distinguish separate attempts and timestamps. Do not change group membership, add Alice to local Administrators, or change endpoint/firewall permissions without explaining the impact and getting explicit approval. No group changes have been made.
 - Temporary lab-only exceptions exist: pfSense pass rule ARCH-01 10.10.30.100 → WIN-01 10.10.20.100 TCP/5985 named `TEMP-LAB-ARCH01-to-WIN01-WinRM` with logging, above the ATTACK block; corresponding temporary Windows Firewall inbound rule; WinRM service started and startup type remains Manual. These exceptions were intentionally retained for the scenario. Do not claim cleanup or remove them without a deliberate plan. Real LAN bridge was not changed.
 
-## Immediate next task
+## Historical October next task (superseded; do not execute)
 Do NOT ask for more screenshots of the same 92110 record. We have enough evidence to begin analysis.
 
 1. Reconcile the exact Alice session timeline from existing Wazuh evidence using Logon ID `0x6e737d`, timestamps, Event IDs 4624/4672/4688 and Sysmon 1/3, and distinguish it from the earlier Administrator session and other failed attempts.
@@ -122,11 +122,15 @@ At the beginning of the new chat:
 4. Do not commit credentials, passwords, tokens, private keys, or personal data.
 5. Keep documentation truthful and reproducible. If exact historical evidence is unavailable, say so rather than inventing it.
 
-## State at chat handoff
-- Current phase: Stage C — Detection Depth.
-- Current objective: AD/lateral-movement investigation with evidence-based correlation.
-- Current task: analyze the already-collected Alice WinRM telemetry and the 100107 correlation mismatch.
-- Completed: DET-001 through DET-021; prior WinRM Administrator session documented; Oct 10 Alice session evidence shown in chat.
-- Open gaps: DET-019 rule 100107 alert cardinality; explain 100107 non-match for Alice; define control/negative test and scenario acceptance criteria; no cross-rule correlation validated.
-- Next task: start with a short evidence-based finding, then one precise diagnostic/action only.
-- Blockers: no technical blocker established; authorization intent for Alice's WinRM access is not yet confirmed.
+## State at chat handoff — 2026-11-27 (overrides older instructions above)
+- Stage C — Detection Depth; DET-001–021 completed; no DET-022 assigned.
+- User paused after fresh WinRM sessions and raw Windows evidence. Do not revisit October logs: September/October local event files and 14 alert indices were purged at user request; November retained. Snapshot and physical disk reclamation unverified. Windows Security logs preserved.
+- KALI-01 replaced ARCH-01 on unchanged VMnet4 / 10.10.30.100. Legacy firewall exception name TEMP-LAB-ARCH01-to-WIN01-WinRM is not evidence of a separate active Arch VM.
+- WIN-01 WinRM started successfully via elevated PowerShell after Alice's service-start attempt failed. TCP 5985 reachable. Administrator and Alice successfully ran whoami and hostname via password-authenticated WinRM. No rule, firewall, network or membership changes today.
+- Wazuh showed two rule 92110 alerts, one 67028 and no 100107 in supplied search. Alice non-elevated, Administrator elevated. Raw Windows confirms 4624/4672 for Administrator IDs 0x140db52 (records 56254/56253, 11:32:31 IST) and 0x14517f7 (56275/56274, 11:32:50 IST). Four indexed 4688 events used 0x140db52, whose matching 4624/4672 were not found in supplied alert searches. Root cause unconfirmed; do not assert ingestion failure or compare Windows event time to Wazuh alert time as though they were equivalent.
+- First task on resume: Wazuh Threat Hunting, November 27 11:30–11:45 IST (06:00–06:15 UTC), query:
+```text
+agent.name:"WIN-01" AND data.win.system.eventRecordID:("56253" OR "56254" OR "56274" OR "56275")
+```
+- Read latest PROJECT-STATE and WinRM investigation checkpoint for full evidence. Do not repeat completed screenshots or tests. Check exact records first, then manager archives, raw 4688 timestamps and runtime rule if needed.
+- Open: rule 100107 correlation cause, control acceptance criteria, alert cardinality, cross-rule correlation, replay, response and metrics; Alice's authorization intent. No change without approval.
