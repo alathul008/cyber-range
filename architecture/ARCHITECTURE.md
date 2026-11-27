@@ -34,12 +34,12 @@ The project is not intended to be a collection of disconnected security tools. D
 | Windows 11 host | Physical virtualization host | IMPLEMENTED |
 | VMware Workstation Pro | Hypervisor | IMPLEMENTED |
 | FW-01 | pfSense firewall/router | IMPLEMENTED in established architecture |
-| ARCH-01 | Arch Linux attack/operator environment | IMPLEMENTED |
+| KALI-01 | Kali Linux attack/operator environment | IMPLEMENTED |
 | DC-01 | Windows Server 2025 AD domain controller and DNS | IMPLEMENTED / VALIDATED |
 | WIN-01 | Windows enterprise endpoint | IMPLEMENTED / VALIDATED |
 | WAZUH-01 | Ubuntu/Wazuh security server | IMPLEMENTED / VALIDATED |
 
-Established addresses: ARCH-01 — 10.10.30.100; DC-01 — 10.10.20.10; WIN-01 — 10.10.20.100; WAZUH-01 — 10.10.40.10.
+Established addresses: KALI-01 — 10.10.30.100; DC-01 — 10.10.20.10; WIN-01 — 10.10.20.100; WAZUH-01 — 10.10.40.10.
 
 The current architecture does not claim deployment of additional future endpoints, web targets, alternate SIEMs, network sensors, dedicated DFIR infrastructure, or cloud environments.
 
@@ -124,8 +124,8 @@ Established convention: pfSense uses .1 on lab segments; Windows host virtual ad
 
 ## 7. VM / Asset Roles
 
-### ARCH-01
-Arch Linux primary attack/operator environment in ATTACK; 10.10.30.100.
+### KALI-01
+Kali Linux primary attack/operator environment in ATTACK; 10.10.30.100.
 
 ### DC-01
 Windows Server 2025 AD domain controller, DNS, and Global Catalog in ENTERPRISE; 10.10.20.10; Wazuh agent 002; Sysmon telemetry.
@@ -248,7 +248,7 @@ The architecture is designed as a 32-GB-class range while the physical host curr
 WAZUH-01 with required DC-01/WIN-01 systems for monitoring, detection, and investigation.
 
 ### Red Team
-ARCH-01 with required enterprise target systems for controlled attack activity.
+KALI-01 with required enterprise target systems for controlled attack activity.
 
 ### Network Security
 FW-01 plus required security/enterprise/attack systems for network-security testing and telemetry.
@@ -275,7 +275,7 @@ These profiles describe operation of the established architecture and do not imp
     |                |          |
   ATTACK          ENTERPRISE  SECURITY
     |                |          |
- ARCH-01          DC-01      WAZUH-01
+ KALI-01          DC-01      WAZUH-01
                      |
                    WIN-01
 
@@ -345,3 +345,5 @@ PROJECT-STATE.md is the permanent cross-chat handoff. DETECTION-ROADMAP.md is th
 This document is the high-level architecture reference. Detailed topology, network specification, asset inventory, security-boundary specification, telemetry architecture, operational profiles, resource plan, target architecture, and architecture decisions are now established in the architecture/ documentation layer.
 
 No infrastructure change is implied by this document.
+
+**2026-11-21 workstation migration:** KALI-01 replaced ARCH-01 on VMnet4 at the same 10.10.30.100 address. The approved segmentation and pfSense architecture remain unchanged. Historical test evidence retains ARCH-01 where applicable. Evil-WinRM v4.1 verified on 2026-11-27; WinRM connectivity to WIN-01 validated without firewall changes.
