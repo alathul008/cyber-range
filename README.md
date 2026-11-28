@@ -4,7 +4,7 @@
 
 A practical, isolated cybersecurity range built with VMware Workstation Pro on Windows 11. The project is designed around measurable security workflows rather than a collection of disconnected tools.
 
-> **Current status:** DET-001 → DET-021 completed. DET-021 is the latest completed detection-engineering objective; the next major capability is now selected from the established architecture and roadmap.
+> **Current status:** DET-001 → DET-021 completed. DET-021 is the latest completed detection-engineering objective; Stage C (Detection Depth) remains active: the November 27 WinRM investigation and rule 100107 correlation gap are unresolved. No DET-022 has been assigned.
 
 ---
 
@@ -96,7 +96,7 @@ The current security-monitoring platform is Wazuh:
 - Wazuh agents on DC-01 and WIN-01
 - Sysmon on DC-01 and WIN-01
 
-Validated Windows telemetry includes Security events such as 4624, 4625, 4672, 4698, 4720, 4728, 4732, 4740, 7045 and Sysmon Event IDs 1 and 11.
+Validated Windows telemetry includes Security events 4624, 4625, 4672, 4698, 4720, 4728, 4732 and 4740, System event 7045, and Sysmon Event IDs 1, 3 and 11.
 
 ---
 
@@ -108,7 +108,7 @@ Detection and correlation are deliberately treated as separate engineering probl
 
 ### Completed
 
-**DET-001 → DET-018 — COMPLETED**
+**DET-001 → DET-021 — COMPLETED (documented scope)**
 
 The detection sequence covers areas including:
 
@@ -129,29 +129,18 @@ The detection sequence covers areas including:
 
 Where evidence supports it, detections are mapped to MITRE ATT&CK. Vendor/native ATT&CK metadata is kept distinct from what the observed evidence actually proves.
 
-### Current
+### Completed correlation milestones
 
 **DET-019 — Privileged Logon → Process Creation Correlation**
 
-The intended investigation chain is:
+DET-019 validated Windows Security 4672 → 4688 correlation by subjectLogonId using custom Wazuh rule 100107. Alert-cardinality tuning remains open.
 
-```
-4624 Successful Logon
-        ↓
-4672 Special Privileges
-        ↓
-Sysmon Event ID 1
-        ↓
-Process Creation
-        ↓
-Wazuh
-        ↓
-Logon-ID/session correlation
-        ↓
-Investigation
-```
+- **DET-020:** ProcessGuid-based Sysmon process → network correlation validated with positive and negative tests.
+- **DET-021:** Process → network correlation validated; the exact downloaded-file Event 11 was not observed. Three-stage correlation remains unvalidated.
 
-DET-019 has **not** been executed. Its ATT&CK mapping will be determined from observed behavior rather than pre-claimed.
+### Current investigation
+
+The November 27 WinRM correlation gap remains unresolved. See [project state](docs/PROJECT-STATE.md) and [investigation evidence](docs/AD-LATERAL-MOVEMENT-WINRM-INVESTIGATION.md). No DET-022 is assigned; Stage D network visibility has not started.
 
 ---
 
@@ -322,11 +311,14 @@ This repository follows several evidence standards:
 | Windows endpoint telemetry | Implemented / validated |
 | Wazuh | Implemented / validated |
 | Sysmon | Implemented / validated |
-| DET-001 → DET-018 | Completed |
-| DET-019 | Current / not started |
+| DET-001 → DET-021 | Completed within documented scope |
+| DET-019 | Validated; alert-cardinality tuning open |
+| DET-020 | Positive and negative validation completed |
+| DET-021 | Telemetry boundary documented; three-stage correlation unvalidated |
+| Stage C WinRM investigation | Paused at November 27 checkpoint; correlation gap unresolved |
+| DET-022 | Not assigned |
 | Target architecture | Documented |
 | Architecture ADR layer | Established |
-| DET-019 pre-attack snapshot | Not created |
 
 ---
 
